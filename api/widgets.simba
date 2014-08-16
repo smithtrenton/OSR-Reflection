@@ -1,0 +1,63 @@
+(*
+Widgets
+=======
+
+Widgets contains the widget api methods.
+
+*)
+
+{$include_once ..\wrappers\widget.simba}
+
+type
+  TWidgetApi = type(TApi);
+var
+  widgets: TWidgetApi;
+
+function TWidgetApi.isValidWidget(index: Integer): Boolean;
+begin
+  Result := reflectLib.getFieldArrayBoolean(0, hook_Client_getValidWidgets, index);
+end;
+
+function TWidgetApi.getValidWidgets: TWidgetArray;
+var
+  len, i, c: Integer;
+  ref: PtrUInt;
+  temp: TWidget;
+begin
+  len := reflectLib.getFieldArraySize(0, hook_Client_getWidgets, 0);
+  c:= 0;
+  SetLength(Result, len);
+
+  for i := 0 to (len - 1) do
+  begin
+    if not self.isValidWidget(i) then
+      continue;
+    ref := reflectLib.getFieldArrayObject(0, hook_Client_getWidgets, i, 'TWidgetApi.getValidWidgets');
+    temp.create(ref);
+    Result[c] := temp;
+    inc(c);
+  end;
+
+  SetLength(Result, c);
+end;
+
+function TWidgetApi.getWidget(index: Integer): TWidget;
+begin
+  if self.isValidWidget(index) then
+    Result.create(reflectLib.getFieldArrayObject(0, hook_Client_getWidgets,
+      index, 'TWidgetApi.getWidget'));
+end;
+
+function TWidgetApi.getWidget(parentIndex, childIndex: Integer): TWidget; overload;
+begin
+  if self.isValidWidget(parentIndex) then
+    Result.create(reflectLib.getFieldArray2DObject(0, hook_Client_getWidgets,
+      parentIndex, childIndex, 'getWidget'));
+end;
+
+function TWidgetApi.getWidget(parentIndex, childIndex, compIndex: Integer): TWidget; overload;
+begin
+  if self.isValidWidget(parentIndex) then
+    Result.create(reflectLib.getFieldArray3DObject(0, hook_Client_getWidgets,
+      parentIndex, childIndex, compIndex, 'getWidget'));
+end;

@@ -1,0 +1,12 @@
+{
+  File:
+    constants.simba
+  Description:
+    Contains constants used in the include
+}
+
+type
+  TRSObject = record
+    ref: PtrUInt;
+  end;
+  TApi = type(Integer);

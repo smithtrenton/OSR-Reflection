@@ -1,0 +1,160 @@
+(*
+Widget
+======
+
+Widget contains the widget record and accessors
+
+*)
+
+type
+  TWidget = type(TRSObject);
+  TWidgetArray = array of TWidget;
+
+procedure TWidget.create(_ref: PtrUInt);
+begin
+  self.ref := _ref;
+end;
+
+procedure TWidget.free;
+begin
+  reflectLib.freeObject(self.ref);
+end;
+
+function TWidget.isNull: Boolean;
+begin
+  Result := (self.ref <= 0);
+end;
+
+procedure TWidgetArray.free;
+var
+  i, len: Integer;
+begin
+  len := Length(self);
+  for i := 0 to len - 1 do
+    self[i].free;
+  setLength(self, 0);
+end;
+
+function TWidget.isHidden: Boolean;
+begin
+  Result := reflectLib.getFieldBoolean(self.ref, hook_Widget_isHidden);
+end;
+
+function TWidget.getWidth: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getWidth);
+end;
+
+function TWidget.getHeight: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getHeight);
+end;
+
+function TWidget.getRelativeX: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getRelativeX);
+end;
+
+function TWidget.getRelativeY: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getRelativeY);
+end;
+
+function TWidget.getX: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getX);
+end;
+
+function TWidget.getY: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getY);
+end;
+
+function TWidget.getActions: TStringArray;
+begin
+  Result := reflectLib.getFieldStringArray(self.ref, hook_Widget_getActions);
+end;
+
+function TWidget.getName: String;
+begin
+  Result := reflectLib.getFieldString(self.ref, hook_Widget_getName);
+end;
+
+function TWidget.getText: String;
+begin
+  Result := reflectLib.getFieldString(self.ref, hook_Widget_getText);
+end;
+
+function TWidget.getID: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getID);
+end;
+
+function TWidget.getIndex: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getIndex);
+end;
+
+function TWidget.getItemID: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getItemID);
+end;
+
+function TWidget.getItemStack: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getItemStack);
+end;
+
+function TWidget.getParentID: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getParentID);
+end;
+
+function TWidget.getBorderThickness: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getBorderThickness);
+end;
+
+function TWidget.getBoundsIndex: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getBoundsIndex);
+end;
+
+function TWidget.getItemIds: TIntegerArray;
+begin
+  Result := reflectLib.getFieldIntArray(self.ref, hook_Widget_getContentIDs);
+end;
+
+function TWidget.getItemStackSizes: TIntegerArray;
+begin
+  Result := reflectLib.getFieldIntArray(self.ref, hook_Widget_getStackSizes);
+end;
+
+function TWidget.getChildren: TWidgetArray;
+var
+  len, c, i: Integer;
+  temp: TWidget;
+begin
+  len := reflectLib.getFieldArraySize(self.ref, hook_Widget_getChildren, 0);
+  c:= 0;
+  SetLength(Result, len);
+
+  for i := 0 to (len - 1) do
+  begin
+    temp.create(reflectLib.getFieldArrayObject(self.ref, hook_Widget_getChildren, i, 'TWidget.getChildren'));
+    if reflectLib.isNull(temp.ref) then
+    begin
+      temp.free;
+      continue;
+    end;
+    Result[c] := temp;
+    inc(c);
+  end;
+
+  SetLength(Result, c);
+end;
+
+function TWidget.getChild(index: Integer): TWidget;
+begin
+  Result.create(reflectLib.getFieldArrayObject(self.ref, hook_Widget_getChildren, index, 'TWidget.getChild'));
+end;
