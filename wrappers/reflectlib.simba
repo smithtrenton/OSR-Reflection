@@ -12,7 +12,7 @@ ments and puts everything into the TReflectLib wrapper.
 
 type
   TReflectLib = record
-    target: PtrUInt;
+    smartPointer: PtrUInt;
     objectManager: TSmartObjectArray;
   end;
 var
@@ -20,37 +20,37 @@ var
 
 procedure TReflectLib.create(_target: PtrUInt);
 begin
-  self.target := _target;
+  self.smartPointer := _target;
 end;
 
 function TReflectLib.getFieldObject(objref:PtrUInt;hook:THook;name:String):Integer;
 begin
-  Result := SmartGetFieldObject(self.target, objref, hook.path);
+  Result := SmartGetFieldObject(self.smartPointer, objref, hook.path);
   self.objectManager.add(Result, hook, name);
 end;
 
 function TReflectLib.getFieldArray3DObject(objref:PtrUInt;hook:THook;x,y,z:integer;name:String):Integer;
 begin
-  Result := SmartGetFieldArray3DObject(self.target, objref, hook.path, x, y, z);
+  Result := SmartGetFieldArray3DObject(self.smartPointer, objref, hook.path, x, y, z);
   self.objectManager.add(Result, hook, name);
 end;
 
 function TReflectLib.getFieldArray2DObject(objref:PtrUInt;hook:THook;x,y:integer;name:String):Integer;
 begin
-  Result := SmartGetFieldArray2DObject(self.target, objref, hook.path, x, y);
+  Result := SmartGetFieldArray2DObject(self.smartPointer, objref, hook.path, x, y);
   self.objectManager.add(Result, hook, name);
 end;
 
 function TReflectLib.getFieldArrayObject(objref:PtrUInt;hook:THook;index:integer;name:String):Integer;
 begin
-  Result := SmartGetFieldArrayObject(self.target, objref, hook.path, index);
+  Result := SmartGetFieldArrayObject(self.smartPointer, objref, hook.path, index);
   self.objectManager.add(Result, hook, name);
 end;
 
 procedure TReflectLib.freeObject(objref:PtrUInt);
 begin
   if not self.isNull(objref) then
-    SmartFreeObject(self.target, objref);
+    SmartFreeObject(self.smartPointer, objref);
   self.objectManager.removeRef(objref);
 end;
 
@@ -60,7 +60,7 @@ begin
   while (self.objectManager.getSize > 0) do
   begin
     if not self.isNull(self.objectManager.get(0).ref) then
-      SmartFreeObject(self.target, self.objectManager.get(0).ref);
+      SmartFreeObject(self.smartPointer, self.objectManager.get(0).ref);
     writeln(#9 + self.objectManager.get(0).toStr);
     self.objectManager.remove(0);
     Inc(Result);
@@ -89,217 +89,217 @@ end;
 
 function TReflectLib.isNull(objref:PtrUInt):Boolean;
 begin
-  Result := SmartIsNull(self.target, objref);
+  Result := SmartIsNull(self.smartPointer, objref);
 end;
 
 function TReflectLib.isEqual(obja, objb:PtrUInt):Boolean;
 begin
-  Result := SmartIsEqual(self.target, obja, objb);
+  Result := SmartIsEqual(self.smartPointer, obja, objb);
 end;
 
 function TReflectLib.isPathValid(objref:PtrUInt;hook:THook):Boolean;
 begin
-  Result := SmartIsPathValid(self.target, objref, hook.path);
+  Result := SmartIsPathValid(self.smartPointer, objref, hook.path);
 end;
 
 function TReflectLib.getFieldBoolean(objref:PtrUInt;hook:THook):Boolean;
 begin
-  Result := SmartGetFieldBoolean(self.target, objref, hook.path);
+  Result := SmartGetFieldBoolean(self.smartPointer, objref, hook.path);
 end;
 
 function TReflectLib.getFieldLongH(objref:PtrUInt;hook:THook):Integer;
 begin
-  Result := SmartGetFieldLongH(self.target, objref, hook.path);
+  Result := SmartGetFieldLongH(self.smartPointer, objref, hook.path);
 end;
 
 function TReflectLib.getFieldLongL(objref:PtrUInt;hook:THook):Integer;
 begin
-  Result := SmartGetFieldLongL(self.target, objref, hook.path);
+  Result := SmartGetFieldLongL(self.smartPointer, objref, hook.path);
 end;
 
 function TReflectLib.getFieldInt(objref:PtrUInt;hook:THook):Integer;
 begin
-  Result := (SmartGetFieldInt(self.target, objref, hook.path) * hook.mult);
+  Result := (SmartGetFieldInt(self.smartPointer, objref, hook.path) * hook.mult);
 end;
 
 function TReflectLib.getFieldShort(objref:PtrUInt;hook:THook):Integer;
 begin
-  Result := SmartGetFieldShort(self.target, objref, hook.path);
+  Result := SmartGetFieldShort(self.smartPointer, objref, hook.path);
 end;
 
 function TReflectLib.getFieldFloat(objref:PtrUInt;hook:THook):Extended;
 begin
-  Result := SmartGetFieldFloat(self.target, objref, hook.path);
+  Result := SmartGetFieldFloat(self.smartPointer, objref, hook.path);
 end;
 
 function TReflectLib.getFieldDouble(objref:PtrUInt;hook:THook):Extended;
 begin
-  Result := SmartGetFieldDouble(self.target, objref, hook.path);
+  Result := SmartGetFieldDouble(self.smartPointer, objref, hook.path);
 end;
 
 function TReflectLib.getFieldByte(objref:PtrUInt;hook:THook):Integer;
 begin
-  Result := SmartGetFieldByte(self.target, objref, hook.path);
+  Result := SmartGetFieldByte(self.smartPointer, objref, hook.path);
 end;
 
 function TReflectLib.getFieldArray3DByte(objref:PtrUInt;hook:THook;x,y,z:integer):Integer;
 begin
-  Result := SmartGetFieldArray3DByte(self.target, objref, hook.path, x, y, z);
+  Result := SmartGetFieldArray3DByte(self.smartPointer, objref, hook.path, x, y, z);
 end;
 
 function TReflectLib.getFieldArray3DChar(objref:PtrUInt;hook:THook;x,y,z:integer):Integer;
 begin
-  Result := SmartGetFieldArray3DChar(self.target, objref, hook.path, x, y, z);
+  Result := SmartGetFieldArray3DChar(self.smartPointer, objref, hook.path, x, y, z);
 end;
 
 function TReflectLib.getFieldArray3DShort(objref:PtrUInt;hook:THook;x,y,z:integer):Integer;
 begin
-  Result := SmartGetFieldArray3DShort(self.target, objref, hook.path, x, y, z);
+  Result := SmartGetFieldArray3DShort(self.smartPointer, objref, hook.path, x, y, z);
 end;
 
 function TReflectLib.getFieldArray3DInt(objref:PtrUInt;hook:THook;x,y,z:integer):Integer;
 begin
-  Result := SmartGetFieldArray3DInt(self.target, objref, hook.path, x, y, z);
+  Result := SmartGetFieldArray3DInt(self.smartPointer, objref, hook.path, x, y, z);
 end;
 
 function TReflectLib.getFieldArray3DFloat(objref:PtrUInt;hook:THook;x,y,z:integer):Extended;
 begin
-  Result := SmartGetFieldArray3DFloat(self.target, objref, hook.path, x, y, z);
+  Result := SmartGetFieldArray3DFloat(self.smartPointer, objref, hook.path, x, y, z);
 end;
 
 function TReflectLib.getFieldArray3DDouble(objref:PtrUInt;hook:THook;x,y,z:integer):Extended;
 begin
-  Result := SmartGetFieldArray3DDouble(self.target, objref, hook.path, x, y, z);
+  Result := SmartGetFieldArray3DDouble(self.smartPointer, objref, hook.path, x, y, z);
 end;
 
 function TReflectLib.getFieldArray3DBoolean(objref:PtrUInt;hook:THook;x,y,z:integer):Boolean;
 begin
-  Result := SmartGetFieldArray3DBoolean(self.target, objref, hook.path, x, y, z);
+  Result := SmartGetFieldArray3DBoolean(self.smartPointer, objref, hook.path, x, y, z);
 end;
 
 function TReflectLib.getFieldArray3DLongH(objref:PtrUInt;hook:THook;x,y,z:integer):Integer;
 begin
-  Result := SmartGetFieldArray3DLongH(self.target, objref, hook.path, x, y, z);
+  Result := SmartGetFieldArray3DLongH(self.smartPointer, objref, hook.path, x, y, z);
 end;
 
 function TReflectLib.getFieldArray3DLongL(objref:PtrUInt;hook:THook;x,y,z:integer):Integer;
 begin
-  Result := SmartGetFieldArray3DLongL(self.target, objref, hook.path, x, y, z);
+  Result := SmartGetFieldArray3DLongL(self.smartPointer, objref, hook.path, x, y, z);
 end;
 
 function TReflectLib.getFieldArray2DByte(objref:PtrUInt;hook:THook;x,y:integer):Integer;
 begin
-  Result := SmartGetFieldArray2DByte(self.target, objref, hook.path, x, y);
+  Result := SmartGetFieldArray2DByte(self.smartPointer, objref, hook.path, x, y);
 end;
 
 function TReflectLib.getFieldArray2DChar(objref:PtrUInt;hook:THook;x,y:integer):Integer;
 begin
-  Result := SmartGetFieldArray2DChar(self.target, objref, hook.path, x, y);
+  Result := SmartGetFieldArray2DChar(self.smartPointer, objref, hook.path, x, y);
 end;
 
 function TReflectLib.getFieldArray2DShort(objref:PtrUInt;hook:THook;x,y:integer):Integer;
 begin
-  Result := SmartGetFieldArray2DShort(self.target, objref, hook.path, x, y);
+  Result := SmartGetFieldArray2DShort(self.smartPointer, objref, hook.path, x, y);
 end;
 
 function TReflectLib.getFieldArray2DInt(objref:PtrUInt;hook:THook;x,y:integer):Integer;
 begin
-  Result := SmartGetFieldArray2DInt(self.target, objref, hook.path, x, y);
+  Result := SmartGetFieldArray2DInt(self.smartPointer, objref, hook.path, x, y);
 end;
 
 function TReflectLib.getFieldArray2DFloat(objref:PtrUInt;hook:THook;x,y:integer):Extended;
 begin
-  Result := SmartGetFieldArray2DFloat(self.target, objref, hook.path, x, y);
+  Result := SmartGetFieldArray2DFloat(self.smartPointer, objref, hook.path, x, y);
 end;
 
 function TReflectLib.getFieldArray2DDouble(objref:PtrUInt;hook:THook;x,y:integer):Extended;
 begin
-  Result := SmartGetFieldArray2DDouble(self.target, objref, hook.path, x, y);
+  Result := SmartGetFieldArray2DDouble(self.smartPointer, objref, hook.path, x, y);
 end;
 
 function TReflectLib.getFieldArray2DBoolean(objref:PtrUInt;hook:THook;x,y:integer):Boolean;
 begin
-  Result := SmartGetFieldArray2DBoolean(self.target, objref, hook.path, x, y);
+  Result := SmartGetFieldArray2DBoolean(self.smartPointer, objref, hook.path, x, y);
 end;
 
 function TReflectLib.getFieldArray2DLongH(objref:PtrUInt;hook:THook;x,y:integer):Integer;
 begin
-  Result := SmartGetFieldArray2DLongH(self.target, objref, hook.path, x, y);
+  Result := SmartGetFieldArray2DLongH(self.smartPointer, objref, hook.path, x, y);
 end;
 
 function TReflectLib.getFieldArray2DLongL(objref:PtrUInt;hook:THook;x,y:integer):Integer;
 begin
-  Result := SmartGetFieldArray2DLongL(self.target, objref, hook.path, x, y);
+  Result := SmartGetFieldArray2DLongL(self.smartPointer, objref, hook.path, x, y);
 end;
 
 function TReflectLib.getFieldArrayByte(objref:PtrUInt;hook:THook;index:integer):Integer;
 begin
-  Result := SmartGetFieldArrayByte(self.target, objref, hook.path, index);
+  Result := SmartGetFieldArrayByte(self.smartPointer, objref, hook.path, index);
 end;
 
 function TReflectLib.getFieldArrayChar(objref:PtrUInt;hook:THook;index:integer):Integer;
 begin
-  Result := SmartGetFieldArrayChar(self.target, objref, hook.path, index);
+  Result := SmartGetFieldArrayChar(self.smartPointer, objref, hook.path, index);
 end;
 
 function TReflectLib.getFieldArrayShort(objref:PtrUInt;hook:THook;index:integer):Integer;
 begin
-  Result := SmartGetFieldArrayShort(self.target, objref, hook.path, index);
+  Result := SmartGetFieldArrayShort(self.smartPointer, objref, hook.path, index);
 end;
 
 function TReflectLib.getFieldArrayInt(objref:PtrUInt;hook:THook;index:integer):Integer;
 begin
-  Result := SmartGetFieldArrayInt(self.target, objref, hook.path, index);
+  Result := SmartGetFieldArrayInt(self.smartPointer, objref, hook.path, index);
 end;
 
 function TReflectLib.getFieldArrayFloat(objref:PtrUInt;hook:THook;index:integer):Extended;
 begin
-  Result := SmartGetFieldArrayFloat(self.target, objref, hook.path, index);
+  Result := SmartGetFieldArrayFloat(self.smartPointer, objref, hook.path, index);
 end;
 
 function TReflectLib.getFieldArrayDouble(objref:PtrUInt;hook:THook;index:integer):Extended;
 begin
-  Result := SmartGetFieldArrayDouble(self.target, objref, hook.path, index);
+  Result := SmartGetFieldArrayDouble(self.smartPointer, objref, hook.path, index);
 end;
 
 function TReflectLib.getFieldArrayBoolean(objref:PtrUInt;hook:THook;index:integer):Boolean;
 begin
-  Result := SmartGetFieldArrayBool(self.target, objref, hook.path, index);
+  Result := SmartGetFieldArrayBool(self.smartPointer, objref, hook.path, index);
 end;
 
 function TReflectLib.getFieldArrayLongH(objref:PtrUInt;hook:THook;index:integer):Integer;
 begin
-  Result := SmartGetFieldArrayLongH(self.target, objref, hook.path, index);
+  Result := SmartGetFieldArrayLongH(self.smartPointer, objref, hook.path, index);
 end;
 
 function TReflectLib.getFieldArrayLongL(objref:PtrUInt;hook:THook;index:integer):Integer;
 begin
-  Result := SmartGetFieldArrayLongL(self.target, objref, hook.path, index);
+  Result := SmartGetFieldArrayLongL(self.smartPointer, objref, hook.path, index);
 end;
 
 function TReflectLib.getFieldArraySize(objref:PtrUInt;hook:THook;dim:integer):Integer;
 begin
-  Result := SmartGetFieldArraySize(self.target, objref, hook.path, dim);
+  Result := SmartGetFieldArraySize(self.smartPointer, objref, hook.path, dim);
 end;
 
 function TReflectLib.stringFromString(objref:PtrUInt):String;
 begin
   SetLength(Result, 512);
-  SetLength(Result, SmartStringFromString(self.target, objref, Result));
+  SetLength(Result, SmartStringFromString(self.smartPointer, objref, Result));
   Result := Trim(Replace(Replace(Result, #194, '', [rfReplaceAll]), #160, #32, [rfReplaceAll]));
 end;
 
 function TReflectLib.stringFromBytes(objref:PtrUInt):String;
 begin
   SetLength(Result, 512);
-  SetLength(Result, SmartStringFromBytes(self.target, objref, Result));
+  SetLength(Result, SmartStringFromBytes(self.smartPointer, objref, Result));
   Result := Trim(Replace(Replace(Result, #194, '', [rfReplaceAll]), #160, #32, [rfReplaceAll]));
 end;
 
 function TReflectLib.stringFromChars(objref:PtrUInt):String;
 begin
   SetLength(Result, 512);
-  SetLength(Result, SmartStringFromChars(self.target, objref, Result));
+  SetLength(Result, SmartStringFromChars(self.smartPointer, objref, Result));
   Result := Trim(Replace(Replace(Result, #194, '', [rfReplaceAll]), #160, #32, [rfReplaceAll]));
 end;
 

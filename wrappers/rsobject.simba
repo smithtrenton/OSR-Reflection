@@ -1,0 +1,29 @@
+(*
+RSObject
+======
+
+RSObject contains the RSObject record and accessors
+
+*)
+
+{$include_once ..\wrappers\reflectlib.simba}
+
+type
+  TRSObject = record
+    ref: PtrUInt;
+  end;
+
+procedure TRSObject.create(_ref: PtrUInt);
+begin
+  self.ref := _ref;
+end;
+
+procedure TRSObject.free;
+begin
+  reflectLib.freeObject(self.ref);
+end;
+
+function TRSObject.isNull: Boolean;
+begin
+  Result := (self.ref <= 0);
+end;

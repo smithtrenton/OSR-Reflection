@@ -1,12 +1,10 @@
-{
-  File:
-    constants.simba
-  Description:
-    Contains constants used in the include
-}
+(*
+Constants
+======
+
+Constants contains globals and constants
+
+*)
 
 type
-  TRSObject = record
-    ref: PtrUInt;
-  end;
-  TApi = type(Integer);
+  TApi = type(Pointer);

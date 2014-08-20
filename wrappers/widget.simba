@@ -10,21 +10,6 @@ type
   TWidget = type(TRSObject);
   TWidgetArray = array of TWidget;
 
-procedure TWidget.create(_ref: PtrUInt);
-begin
-  self.ref := _ref;
-end;
-
-procedure TWidget.free;
-begin
-  reflectLib.freeObject(self.ref);
-end;
-
-function TWidget.isNull: Boolean;
-begin
-  Result := (self.ref <= 0);
-end;
-
 procedure TWidgetArray.free;
 var
   i, len: Integer;
@@ -102,12 +87,12 @@ end;
 
 function TWidget.getItemStack: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getItemStack);
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getStackSize);
 end;
 
-function TWidget.getParentID: Integer;
+function TWidget.getRootID: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getParentID);
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getRootID);
 end;
 
 function TWidget.getBorderThickness: Integer;

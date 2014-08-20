@@ -1,0 +1,6 @@
+program new;
+{$loadlib libsmartremote}
+{$i OSR Reflection\OSR Reflection.simba}
+
+begin
+end.

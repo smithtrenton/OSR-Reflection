@@ -13,7 +13,7 @@ const
 
 //Wrapper Includes
 {$include_once data\constants.simba}
-{$include_once wrappers\reflectlib.simba}
+{$include_once wrappers\rsobject.simba}
 
 //API Includes
 {$include_once api\widgets.simba}

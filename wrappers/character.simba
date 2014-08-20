@@ -1,0 +1,13 @@
+(*
+Character
+=========
+
+Character contains the Character record and accessors
+
+*)
+
+type
+  TCharacter = type(TRSObject);
+
+
+
