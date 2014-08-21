@@ -12,8 +12,9 @@ const
 {$ENDIF}
 
 //Wrapper Includes
-{$include_once data\constants.simba}
+{$include_once data\globals.simba}
 {$include_once wrappers\rsobject.simba}
+{$include_once wrappers\client.simba}
 
 //API Includes
 {$include_once api\widgets.simba}

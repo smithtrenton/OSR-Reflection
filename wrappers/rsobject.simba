@@ -1,6 +1,6 @@
 (*
 RSObject
-======
+========
 
 RSObject contains the RSObject record and accessors
 
@@ -18,6 +18,46 @@ begin
   self.ref := _ref;
 end;
 
+procedure TRSObject.create(_ref: PtrUInt; hook: THook; name: String); overload;
+begin
+  self.create(reflectLib.getFieldObject(_ref, hook, name));
+end;
+
+procedure TRSObject.create(_ref: PtrUInt; hook: THook; index: Integer; name: String); overload;
+begin
+  self.create(reflectLib.getFieldArrayObject(_ref, hook, index, name));
+end;
+
+procedure TRSObject.create(_ref: PtrUInt; hook: THook; x, y: Integer; name: String); overload;
+begin
+  self.create(reflectLib.getFieldArray2DObject(_ref, hook, x, y, name));
+end;
+
+procedure TRSObject.create(_ref: PtrUInt; hook: THook; x, y, z: Integer; name: String); overload;
+begin
+  self.create(reflectLib.getFieldArray3DObject(_ref, hook, x, y, z, name));
+end;
+
+procedure TRSObject.create(_ref: PtrUInt; hook: THook); overload;
+begin
+  self.create(reflectLib.getFieldObject(_ref, hook));
+end;
+
+procedure TRSObject.create(_ref: PtrUInt; hook: THook; index: Integer); overload;
+begin
+  self.create(reflectLib.getFieldArrayObject(_ref, hook, index));
+end;
+
+procedure TRSObject.create(_ref: PtrUInt; hook: THook; x, y: Integer); overload;
+begin
+  self.create(reflectLib.getFieldArray2DObject(_ref, hook, x, y));
+end;
+
+procedure TRSObject.create(_ref: PtrUInt; hook: THook; x, y, z: Integer); overload;
+begin
+  self.create(reflectLib.getFieldArray3DObject(_ref, hook, x, y, z));
+end;
+
 procedure TRSObject.free;
 begin
   reflectLib.freeObject(self.ref);
@@ -25,5 +65,10 @@ end;
 
 function TRSObject.isNull: Boolean;
 begin
-  Result := (self.ref <= 0);
+  Result := reflectLib.isNull(self.ref);
+end;
+
+function TRSObject.isEqual(rsobj: TRSObject): Boolean;
+begin
+  Result := reflectLib.isEqual(self.ref, rsobj.ref);
 end;

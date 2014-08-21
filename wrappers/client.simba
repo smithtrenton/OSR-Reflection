@@ -1,0 +1,120 @@
+(*
+Client
+======
+
+Client contains the client record and accessors
+
+*)
+
+type
+  TRSClient = type(TApi);
+
+var
+  rsclient: TRSClient;
+
+function TRSClient.getGameCycle: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getGameCycle);
+end;
+
+function TRSClient.getGameState: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getGameState);
+end;
+
+function TRSClient.getLoginState: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getLoginState);
+end;
+
+function TRSClient.getBaseX: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getBaseX);
+end;
+
+function TRSClient.getBaseY: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getBaseY);
+end;
+
+function TRSClient.getCameraPitch: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getCameraPitch);
+end;
+
+function TRSClient.getCameraYaw: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getCameraYaw);
+end;
+
+function TRSClient.getCameraX: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getCameraX);
+end;
+
+function TRSClient.getCameraY: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getCameraY);
+end;
+
+function TRSClient.getCameraZ: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getCameraZ);
+end;
+
+function TRSClient.getMapAngle: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getMapAngle);
+end;
+
+function TRSClient.getMapOffset: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getMapOffset);
+end;
+
+function TRSClient.getMapScale: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getMapScale);
+end;
+
+function TRSClient.getMenuActions: TStringArray;
+begin
+  Result := reflectLib.getFieldStringArray(0, hook_Client_getMenuActions);
+end;
+
+function TRSClient.getMenuCount: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getMenuCount);
+end;
+
+function TRSClient.getMenuHeight: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getMenuHeight);
+end;
+
+function TRSClient.getMenuWidth: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getMenuWidth);
+end;
+
+function TRSClient.getMenuX: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getMenuX);
+end;
+
+function TRSClient.getMenuY: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getMenuY);
+end;
+
+function TRSClient.getPlane: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getPlane);
+end;
+
+function TRSClient.isMenuOpen: Boolean;
+begin
+  Result := reflectLib.getFieldBoolean(0, hook_Client_isMenuOpen);
+end;
+
+

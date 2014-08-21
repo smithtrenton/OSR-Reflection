@@ -20,7 +20,7 @@ end;
 function THook.toStr: String;
 begin
   Result := 'Hook[' + self.name + ']: ' + self.path;
-  if (self.mult <> 1) then
+  if (self.mult <> 0) then
     Result := Result + #13#10#9 + 'Multiplier: ' + toString(self.mult);
 end;
 
@@ -279,6 +279,7 @@ const
     hook_Widget_getStackSize: THook = ['dt', 'getStackSize', 1894951665];
     hook_Widget_getStackSizes: THook = ['dw', 'getStackSizes', 0];
     hook_Widget_getText: THook = ['bq', 'getText', 0];
+    hook_Widget_getType: THook = ['t', 'getType', -882190837];
     hook_Widget_getWidth: THook = ['f', 'getWidth', -269528743];
     hook_Widget_getX: THook = ['a', 'getX', 325348029];
     hook_Widget_getY: THook = ['r', 'getY', -1881759821];

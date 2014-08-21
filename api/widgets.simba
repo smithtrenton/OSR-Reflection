@@ -18,13 +18,11 @@ begin
   Result := reflectLib.getFieldArrayBoolean(0, hook_Client_getValidWidgets, index);
 end;
 
-function TWidgetApi.getValidWidgets: TWidgetArray;
+function TWidgetApi.getValidWidgetGroups: TIntegerArray;
 var
   len, i, c: Integer;
-  ref: PtrUInt;
-  temp: TWidget;
 begin
-  len := reflectLib.getFieldArraySize(0, hook_Client_getWidgets, 0);
+  len := reflectLib.getFieldArraySize(0, hook_Client_getWidgets);
   c:= 0;
   SetLength(Result, len);
 
@@ -32,32 +30,51 @@ begin
   begin
     if not self.isValidWidget(i) then
       continue;
-    ref := reflectLib.getFieldArrayObject(0, hook_Client_getWidgets, i, 'TWidgetApi.getValidWidgets');
-    temp.create(ref);
-    Result[c] := temp;
+    Result[c] := i;
     inc(c);
   end;
 
   SetLength(Result, c);
 end;
 
-function TWidgetApi.getWidget(index: Integer): TWidget;
+function TWidgetApi.getWidget(groupIndex, widgetIndex: Integer): TWidget;
 begin
+  if self.isValidWidget(groupIndex) then
+    Result.create(0, hook_Client_getWidgets,
+      groupIndex, widgetIndex, 'getWidget');
+end;
+
+function TWidgetApi.getWidget(groupIndex, parentIndex, childIndex: Integer): TWidget; overload;
+var
+  parent: TWidget;
+begin
+  if self.isValidWidget(groupIndex) then
+  begin
+    parent.create(0, hook_Client_getWidgets,
+      groupIndex, parentIndex, 'getWidget2');
+    Result := parent.getChild(childIndex);
+    parent.free;
+  end;
+end;
+
+function TWidgetApi.getWidgetGroup(index: Integer): TWidgetArray;
+var
+  c: Integer;
+  temp: TWidget;
+begin
+  c := 0;
   if self.isValidWidget(index) then
-    Result.create(reflectLib.getFieldArrayObject(0, hook_Client_getWidgets,
-      index, 'TWidgetApi.getWidget'));
-end;
-
-function TWidgetApi.getWidget(parentIndex, childIndex: Integer): TWidget; overload;
-begin
-  if self.isValidWidget(parentIndex) then
-    Result.create(reflectLib.getFieldArray2DObject(0, hook_Client_getWidgets,
-      parentIndex, childIndex, 'getWidget'));
-end;
-
-function TWidgetApi.getWidget(parentIndex, childIndex, compIndex: Integer): TWidget; overload;
-begin
-  if self.isValidWidget(parentIndex) then
-    Result.create(reflectLib.getFieldArray3DObject(0, hook_Client_getWidgets,
-      parentIndex, childIndex, compIndex, 'getWidget'));
+  begin
+    SetLength(Result, 1000);
+    temp := widgets.getWidget(index, c);
+    while (not temp.isNull) do
+    begin
+      Result[c] := temp;
+      inc(c);
+      temp := widgets.getWidget(index, c);
+    end;
+    if temp.isNull then
+      temp.free;
+  end;
+  SetLength(Result, c);
 end;

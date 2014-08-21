@@ -1,0 +1,87 @@
+(*
+Nodes
+=====
+
+Nodes contains the node/hashtable record and accessors
+
+*)
+
+type
+  TNode = type(TRSObject);
+  TNodeArray = array of TNode;
+  THashTable = type(TRSObject);
+  TCache = type(TRSObject);
+
+function TNode.getNext: TNode;
+begin
+  Result.create(self.ref, hook_Node_getNext, 'TNode.getNext');
+end;
+
+function TNode.getPrevious: TNode;
+begin
+  Result.create(self.ref, hook_Node_getPrevious, 'TNode.getPrevious');
+end;
+
+function TNode.getUID: Integer;
+begin
+  Result := reflectLib.getFieldLongL(self.ref, hook_Node_getUID);
+end;
+
+procedure TNodeArray.free;
+var
+  i, len: Integer;
+begin
+  len := Length(self);
+  for i := 0 to len - 1 do
+    self[i].free;
+  setLength(self, 0);
+end;
+
+function THashTable.getCurrent: TNode;
+begin
+  Result.create(self.ref, hook_HashTable_getCurrent, 'THashTable.getCurrent');
+end;
+
+function THashTable.getHead: TNode;
+begin
+  Result.create(self.ref, hook_HashTable_getHead, 'THashTable.getHead');
+end;
+
+function THashTable.getSize: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_HashTable_getSize);
+end;
+
+function THashTable.getCurrentIndex: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_HashTable_getCurrentIndex);
+end;
+
+function THashTable.getNodes: TNodeArray;
+var
+  len, c, i: Integer;
+  temp: TNode;
+begin
+  len := self.getSize;
+  c:= 0;
+  SetLength(Result, len);
+
+  for i := 0 to (len - 1) do
+  begin
+    temp.create(self.ref, hook_HashTable_getNodes, i, 'THashTable.getNodes[' + toString(i) + ']');
+    if temp.isNull then
+    begin
+      temp.free;
+      continue;
+    end;
+    Result[c] := temp;
+    inc(c);
+  end;
+
+  SetLength(Result, c);
+end;
+
+function TCache.getHashTable: THashTable;
+begin
+  Result.create(self.ref, hook_Cache_getHashTable, 'TCache.getHashTable');
+end;

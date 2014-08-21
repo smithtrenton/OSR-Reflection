@@ -23,25 +23,25 @@ begin
   self.smartPointer := _target;
 end;
 
-function TReflectLib.getFieldObject(objref:PtrUInt;hook:THook;name:String):Integer;
+function TReflectLib.getFieldObject(objref:PtrUInt;hook:THook;name:String):PtrUInt;
 begin
   Result := SmartGetFieldObject(self.smartPointer, objref, hook.path);
   self.objectManager.add(Result, hook, name);
 end;
 
-function TReflectLib.getFieldArray3DObject(objref:PtrUInt;hook:THook;x,y,z:integer;name:String):Integer;
+function TReflectLib.getFieldArray3DObject(objref:PtrUInt;hook:THook;x,y,z:integer;name:String):PtrUInt;
 begin
   Result := SmartGetFieldArray3DObject(self.smartPointer, objref, hook.path, x, y, z);
   self.objectManager.add(Result, hook, name);
 end;
 
-function TReflectLib.getFieldArray2DObject(objref:PtrUInt;hook:THook;x,y:integer;name:String):Integer;
+function TReflectLib.getFieldArray2DObject(objref:PtrUInt;hook:THook;x,y:integer;name:String):PtrUInt;
 begin
   Result := SmartGetFieldArray2DObject(self.smartPointer, objref, hook.path, x, y);
   self.objectManager.add(Result, hook, name);
 end;
 
-function TReflectLib.getFieldArrayObject(objref:PtrUInt;hook:THook;index:integer;name:String):Integer;
+function TReflectLib.getFieldArrayObject(objref:PtrUInt;hook:THook;index:integer;name:String):PtrUInt;
 begin
   Result := SmartGetFieldArrayObject(self.smartPointer, objref, hook.path, index);
   self.objectManager.add(Result, hook, name);
@@ -67,22 +67,22 @@ begin
   end;
 end;
 
-function TReflectLib.getFieldObject(objref:PtrUInt;hook:THook):Integer; overload;
+function TReflectLib.getFieldObject(objref:PtrUInt;hook:THook):PtrUInt; overload;
 begin
   Result := self.getFieldObject(objref, hook, '');
 end;
 
-function TReflectLib.getFieldArray3DObject(objref:PtrUInt;hook:THook;x,y,z:integer):Integer; overload;
+function TReflectLib.getFieldArray3DObject(objref:PtrUInt;hook:THook;x,y,z:integer):PtrUInt; overload;
 begin
   Result := self.getFieldArray3DObject(objref, hook, x, y, z, '');
 end;
 
-function TReflectLib.getFieldArray2DObject(objref:PtrUInt;hook:THook;x,y:integer):Integer; overload;
+function TReflectLib.getFieldArray2DObject(objref:PtrUInt;hook:THook;x,y:integer):PtrUInt; overload;
 begin
   Result := self.getFieldArray2DObject(objref, hook, x, y, '');
 end;
 
-function TReflectLib.getFieldArrayObject(objref:PtrUInt;hook:THook;index:integer):Integer; overload;
+function TReflectLib.getFieldArrayObject(objref:PtrUInt;hook:THook;index:integer):PtrUInt; overload;
 begin
   Result := self.getFieldArrayObject(objref, hook, index, '');
 end;
@@ -277,10 +277,19 @@ begin
   Result := SmartGetFieldArrayLongL(self.smartPointer, objref, hook.path, index);
 end;
 
-function TReflectLib.getFieldArraySize(objref:PtrUInt;hook:THook;dim:integer):Integer;
+function TReflectLib.getFieldArraySize(objref:PtrUInt;hook:THook):Integer;
 begin
-  Result := SmartGetFieldArraySize(self.smartPointer, objref, hook.path, dim);
+  Result := SmartGetFieldArraySize(self.smartPointer, objref, hook.path, 0);
 end;
+
+{function TReflectLib.getFieldArray2DSize(objref:PtrUInt;hook:THook;index:integer):Integer;
+var
+  obj: PtrUInt;
+begin
+  obj := self.getFieldArrayObject(objref, hook, index);
+  Result := SmartGetFieldArraySize(self.smartPointer, obj, ' ', 0);
+  self.freeObject(obj);
+end;}
 
 function TReflectLib.stringFromString(objref:PtrUInt):String;
 begin
@@ -343,7 +352,7 @@ function TReflectLib.getFieldStringArray(objref:PtrUInt;hook:THook): TStringArra
 var
   hi, i: Integer;
 begin
-  SetLength(Result, self.getFieldArraySize(objref, hook, 0));
+  SetLength(Result, self.getFieldArraySize(objref, hook));
   hi := High(Result);
   for i := 0 to hi do
   begin
@@ -355,7 +364,7 @@ function TReflectLib.getFieldIntArray(objref:PtrUInt;hook:THook): TIntegerArray;
 var
   hi, i: Integer;
 begin
-  SetLength(Result, self.getFieldArraySize(objref, hook, 0));
+  SetLength(Result, self.getFieldArraySize(objref, hook));
   hi := High(Result);
   for i := 0 to hi do
   begin
@@ -367,7 +376,7 @@ function TReflectLib.getFieldBooleanArray(objref:PtrUInt;hook:THook): array of B
 var
   hi, i: Integer;
 begin
-  SetLength(Result, self.getFieldArraySize(objref, hook, 0));
+  SetLength(Result, self.getFieldArraySize(objref, hook));
   hi := High(Result);
   for i := 0 to hi do
   begin
@@ -379,7 +388,7 @@ function TReflectLib.getFieldDoubleArray(objref:PtrUInt;hook:THook): array of Do
 var
   hi, i: Integer;
 begin
-  SetLength(Result, self.getFieldArraySize(objref, hook, 0));
+  SetLength(Result, self.getFieldArraySize(objref, hook));
   hi := High(Result);
   for i := 0 to hi do
   begin
@@ -391,7 +400,7 @@ function TReflectLib.getFieldFloatArray(objref:PtrUInt;hook:THook): TExtendedArr
 var
   hi, i: Integer;
 begin
-  SetLength(Result, self.getFieldArraySize(objref, hook, 0));
+  SetLength(Result, self.getFieldArraySize(objref, hook));
   hi := High(Result);
   for i := 0 to hi do
   begin
@@ -403,7 +412,7 @@ function TReflectLib.getFieldByteArray(objref:PtrUInt;hook:THook): array of Byte
 var
   hi, i: Integer;
 begin
-  SetLength(Result, self.getFieldArraySize(objref, hook, 0));
+  SetLength(Result, self.getFieldArraySize(objref, hook));
   hi := High(Result);
   for i := 0 to hi do
   begin
@@ -415,7 +424,7 @@ function TReflectLib.getFieldCharArray(objref:PtrUInt;hook:THook): TIntegerArray
 var
   hi, i: Integer;
 begin
-  SetLength(Result, self.getFieldArraySize(objref, hook, 0));
+  SetLength(Result, self.getFieldArraySize(objref, hook));
   hi := High(Result);
   for i := 0 to hi do
   begin
@@ -427,7 +436,7 @@ function TReflectLib.getFieldShortArray(objref:PtrUInt;hook:THook): TIntegerArra
 var
   hi, i: Integer;
 begin
-  SetLength(Result, self.getFieldArraySize(objref, hook, 0));
+  SetLength(Result, self.getFieldArraySize(objref, hook));
   hi := High(Result);
   for i := 0 to hi do
   begin
