@@ -262,10 +262,8 @@ begin
       boundsX := reflectLib.getFieldIntArray(0, hook_Client_getWidgetBoundsX);
       boundsY := reflectLib.getFieldIntArray(0, hook_Client_getWidgetBoundsY);
       i := self.getBoundsIndex;
-      Result := Point(boundsX[i], boundsY[i]);
-      if (self.getType > 0) then
-        Result := Point(result.x + self.getWidgetX, result.y + self.getWidgetY);
-      exit;
+      if (i <> -1) and (i < Length(boundsX)) then
+        exit(Point(boundsX[i] + self.getWidgetX, boundsY[i] + self.getWidgetY));
     end else
     begin
       Result := parent.getPosition;

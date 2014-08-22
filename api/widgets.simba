@@ -11,7 +11,7 @@ Widgets contains the widget api methods.
 type
   TWidgetApi = type(TApi);
 var
-  widgets: TWidgetApi;
+  widgetAPI: TWidgetApi;
 
 function TWidgetApi.isValidWidget(index: Integer): Boolean;
 begin
