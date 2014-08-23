@@ -287,6 +287,11 @@ begin
   try
     if parent.isNull then
     begin
+      if(self.getBoundsIndex = -1) then
+      begin
+        Result := Point(self.getWidgetX, self.getWidgetY);
+        Exit(Result);
+      end;
       Result := Point(getBoundsX, getBoundsY);
       Exit(Result);
     end else
