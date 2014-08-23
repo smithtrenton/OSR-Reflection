@@ -66,12 +66,12 @@ begin
   if self.isValidWidget(index) then
   begin
     SetLength(Result, 1000);
-    temp := widgets.getWidget(index, c);
+    temp := widgetAPI.getWidget(index, c);
     while (not temp.isNull) do
     begin
       Result[c] := temp;
       inc(c);
-      temp := widgets.getWidget(index, c);
+      temp := widgetAPI.getWidget(index, c);
     end;
     if temp.isNull then
       temp.free;

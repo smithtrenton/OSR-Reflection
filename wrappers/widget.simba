@@ -44,6 +44,11 @@ begin
   self.create(0, hook_Client_getWidgets, id shr 16, id and $FFFF, 'TWidget.create');
 end;
 
+function TWidget.getBoundsIndex: Integer;
+begin
+  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getBoundsIndex);
+end;
+
 function TWidget.getWidth: Integer;
 begin
   Result := reflectLib.getFieldInt(self.ref, hook_Widget_getWidth);
@@ -72,6 +77,34 @@ end;
 function TWidget.getWidgetY: Integer;
 begin
   Result := reflectLib.getFieldInt(self.ref, hook_Widget_getY);
+end;
+
+function TWidget.getBoundsX: Integer;
+var
+  boundsArr: TIntegerArray;
+begin
+  Result := self.getBoundsIndex;
+  if (Result <> -1) then
+  begin
+    boundsArr := reflectLib.getFieldIntArray(0, hook_Client_getWidgetBoundsX);
+    if (Result < Length(boundsArr)) then
+      exit(boundsArr[Result]);
+    exit(0);
+  end;
+end;
+
+function TWidget.getBoundsY: Integer;
+var
+  boundsArr: TIntegerArray;
+begin
+  Result := self.getBoundsIndex;
+  if (Result <> -1) then
+  begin
+    boundsArr := reflectLib.getFieldIntArray(0, hook_Client_getWidgetBoundsY);
+    if (Result < Length(boundsArr)) then
+      exit(boundsArr[Result]);
+    exit(0);
+  end;
 end;
 
 function TWidget.getScrollX: Integer;
@@ -132,11 +165,6 @@ end;
 function TWidget.getBorderThickness: Integer;
 begin
   Result := reflectLib.getFieldInt(self.ref, hook_Widget_getBorderThickness);
-end;
-
-function TWidget.getBoundsIndex: Integer;
-begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getBoundsIndex);
 end;
 
 function TWidget.getContentIds: TIntegerArray;
@@ -259,17 +287,14 @@ begin
   try
     if parent.isNull then
     begin
-      boundsX := reflectLib.getFieldIntArray(0, hook_Client_getWidgetBoundsX);
-      boundsY := reflectLib.getFieldIntArray(0, hook_Client_getWidgetBoundsY);
-      i := self.getBoundsIndex;
-      if (i <> -1) and (i < Length(boundsX)) then
-        exit(Point(boundsX[i] + self.getWidgetX, boundsY[i] + self.getWidgetY));
+      Result := Point(getBoundsX, getBoundsY);
+      Exit(Result);
     end else
     begin
       Result := parent.getPosition;
       Result := Point(Result.x - parent.getScrollX, Result.y - parent.getScrollY);
     end;
-    Result := Point(Result.x + self.getWidgetX, Result.y + self.getWidgetY);
+    Result := Point(Result.x + self.getRelativeX, Result.y + self.getRelativeY);
   finally
     parent.free;
   end;

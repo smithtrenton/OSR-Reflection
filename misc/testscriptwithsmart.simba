@@ -1,0 +1,43 @@
+program new;
+{$i standaloneSMART\standaloneSMART.simba}
+{$i OSR-Reflection\OSR Reflection.simba}
+
+var
+  Smart: TSmartClient;
+  widgets,ta: TWidgetArray;
+  temp: TWidget;
+  i: Integer;
+
+begin
+  Smart.Init;
+  SetupOSRReflection(Smart.Target);
+
+  writeln(widgetAPI.getValidWidgetGroups);
+  widgets := widgetAPI.getWidgetGroup(137);
+  for i := 0 to 1 do
+  begin
+    if widgets[i].isValid then
+    begin
+      writeln('137, ', i, ':');
+      writeln('widgetx:',widgets[i].getWidgetX);
+      writeln('widgety:',widgets[i].getWidgetY);
+      writeln('relx:',widgets[i].getRelativeX);
+      writeln('rely:',widgets[i].getRelativeY);
+      writeln('widgeth:',widgets[i].getHeight);
+      writeln('widgetw:',widgets[i].getWidth);
+      writeln('boundsx:',widgets[i].getBoundsX);
+      writeln('boundsy:',widgets[i].getBoundsY);
+      writeln('scrollx:',widgets[i].getScrollX);
+      writeln('scrolly:',widgets[i].getScrollY);
+      writeln('type:',widgets[i].getType);
+      ta := widgets[i].getChildren;
+      writeln('c:',ta);
+      ta.free;
+      Smart.Image.drawBox(widgets[i].getBounds, false, clGreen);
+    end;
+  end;
+  widgets.free;
+
+
+  Smart.Free;
+end.
