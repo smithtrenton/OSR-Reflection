@@ -294,7 +294,7 @@ begin
       Result := parent.getPosition;
       Result := Point(Result.x - parent.getScrollX, Result.y - parent.getScrollY);
     end;
-    Result := Point(Result.x + self.getRelativeX, Result.y + self.getRelativeY);
+    Result := Point(Result.x + self.getWidgetX, Result.y + self.getWidgetY);
   finally
     parent.free;
   end;
