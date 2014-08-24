@@ -26,7 +26,7 @@ end;
 
 const
   revision = 57;
-  hook_Empty: THook = ['', 'Empty', 1];
+  hook_Empty: THook = ['', 'Empty', 0];
 
   hook_BoundaryObject: THook = ['ca', 'BoundaryObject', 0];
     hook_BoundaryObject_getAlternativeOrientation: THook = ['q', 'getAlternativeOrientation', -113934057];

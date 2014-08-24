@@ -81,28 +81,28 @@ end;
 
 function TWidget.getBoundsX: Integer;
 var
-  boundsArr: TIntegerArray;
+  len: Integer;
 begin
   Result := self.getBoundsIndex;
   if (Result <> -1) then
   begin
-    boundsArr := reflectLib.getFieldIntArray(0, hook_Client_getWidgetBoundsX);
-    if (Result < Length(boundsArr)) then
-      exit(boundsArr[Result]);
+    len := reflectLib.getFieldArraySize(0, hook_Client_getWidgetBoundsX);
+    if (Result < len) then
+      exit(reflectLib.getFieldArrayInt(0, hook_Client_getWidgetBoundsX, Result));
     exit(0);
   end;
 end;
 
 function TWidget.getBoundsY: Integer;
 var
-  boundsArr: TIntegerArray;
+  len: Integer;
 begin
   Result := self.getBoundsIndex;
   if (Result <> -1) then
   begin
-    boundsArr := reflectLib.getFieldIntArray(0, hook_Client_getWidgetBoundsY);
-    if (Result < Length(boundsArr)) then
-      exit(boundsArr[Result]);
+    len := reflectLib.getFieldArraySize(0, hook_Client_getWidgetBoundsY);
+    if (Result < len) then
+      exit(reflectLib.getFieldArrayInt(0, hook_Client_getWidgetBoundsY, Result));
     exit(0);
   end;
 end;
@@ -224,13 +224,13 @@ end;
 
 function TWidget.getParentID: Integer;
 var
-  id, i, len: Integer;
+  id, i, len, wid: Integer;
   widgetHashTable: THashTable;
   widgetNodes: TNodeArray;
   node, next: TNode;
 begin
   id := self.getRootID;
-  if (id <> -1) then
+  if (id > 0) then
     exit(id);
 
   id := (self.getID shr 16);
@@ -241,27 +241,41 @@ begin
     for i := 0 to len - 1 do
     begin
       node := widgetNodes[i].getNext;
-      while (not (widgetNodes[i].isEqual(node))) do
-      begin
-        if (reflectLib.getFieldInt(node.ref, hook_WidgetNode_getID) = id) then
-          exit(node.getUID);
 
+      while (widgetNodes[i].getUID <> node.getUID) do
+      begin
+        if (id = reflectLib.getFieldInt(node.ref, hook_WidgetNode_getID)) then
+        begin
+          Result := node.getUID;
+          node.free;
+          next.free;
+          exit;
+        end;
         next := node.getNext;
         node.free;
         node := next;
       end;
+
       node.free;
       next.free;
     end;
+
   finally
     widgetHashTable.free;
     widgetNodes.free;
   end;
+  Result := -1;
 end;
 
 function TWidget.getParent: TWidget;
+var
+  pid: Integer;
 begin
-  Result.createFromID(self.getParentID);
+  pid := self.getParentID;
+  if (pid > 0) then
+    Result.createFromID(self.getParentID)
+      else
+        Result.create(0);
 end;
 
 function TWidget.isHidden: Boolean;
@@ -287,8 +301,7 @@ begin
   try
     if parent.isNull then
     begin
-      Result := Point(getBoundsX, getBoundsY);
-      Exit(Result);
+      Exit(Point(self.getBoundsX, self.getBoundsY));
     end else
     begin
       Result := parent.getPosition;

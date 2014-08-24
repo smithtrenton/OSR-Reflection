@@ -37,24 +37,9 @@ begin
   setLength(self, 0);
 end;
 
-function THashTable.getCurrent: TNode;
-begin
-  Result.create(self.ref, hook_HashTable_getCurrent, 'THashTable.getCurrent');
-end;
-
-function THashTable.getHead: TNode;
-begin
-  Result.create(self.ref, hook_HashTable_getHead, 'THashTable.getHead');
-end;
-
 function THashTable.getSize: Integer;
 begin
   Result := reflectLib.getFieldInt(self.ref, hook_HashTable_getSize);
-end;
-
-function THashTable.getCurrentIndex: Integer;
-begin
-  Result := reflectLib.getFieldInt(self.ref, hook_HashTable_getCurrentIndex);
 end;
 
 function THashTable.getNodes: TNodeArray;

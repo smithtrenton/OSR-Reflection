@@ -61,6 +61,7 @@ end;
 procedure TRSObject.free;
 begin
   reflectLib.freeObject(self.ref);
+  self.ref := 0;
 end;
 
 function TRSObject.isNull: Boolean;
