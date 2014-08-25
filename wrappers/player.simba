@@ -30,7 +30,7 @@ end;
 
 function TPlayer.toString: String;
 begin
-  Result := Format('%s(lvl:%d)', [Self.getName, Self.getCombatLevel]);
+  Result := Format('%s(lvl:%d) at (%d, %d)', [Self.getName, Self.getCombatLevel, Self.getX, Self.getY]);
 end;
 
 procedure TPlayerArray.debug;
