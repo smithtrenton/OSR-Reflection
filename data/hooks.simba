@@ -14,14 +14,14 @@ type
 
 function THook.isNull: Boolean;
 begin
-  Result := (self.path = '') or (self.name = '');
+  Result := (Self.path = '') or (Self.name = '');
 end;
 
 function THook.toStr: String;
 begin
-  Result := 'Hook[' + self.name + ']: ' + self.path;
-  if (self.mult <> 0) then
-    Result := Result + #13#10#9 + 'Multiplier: ' + toString(self.mult);
+  Result := 'Hook[' + Self.name + ']: ' + Self.path;
+  if (Self.mult <> 0) then
+    Result := Result + #13#10#9 + 'Multiplier: ' + toString(Self.mult);
 end;
 
 const
@@ -107,7 +107,7 @@ const
     hook_Client_getMenuX: THook = ['gv.hl', 'getMenuX', 309923385];
     hook_Client_getMenuY: THook = ['i.hg', 'getMenuY', -1277797977];
     hook_Client_getNPCCompositeCache: THook = ['ab.h', 'getNPCCompositeCache', 0];
-    hook_Client_getNPCIndices: THook = ['client.bo', 'getNPCIndices', 0];
+    hook_Client_getNPCIndices: THook = ['client.bs', 'getNPCIndices', 0];
     hook_Client_getObjectCompositeCache: THook = ['ai.v', 'getObjectCompositeCache', 0];
     hook_Client_getPassword: THook = ['au.ab', 'getPassword', 0];
     hook_Client_getPlane: THook = ['ed.hb', 'getPlane', -925739149];

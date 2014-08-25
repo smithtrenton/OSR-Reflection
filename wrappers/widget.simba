@@ -16,10 +16,10 @@ procedure TWidgetArray.free;
 var
   i, len: Integer;
 begin
-  len := Length(self);
+  len := Length(Self);
   for i := 0 to len - 1 do
-    self[i].free;
-  setLength(self, 0);
+    Self[i].free;
+  setLength(Self, 0);
 end;
 
 function TWidget.toStr: String; forward;
@@ -28,68 +28,68 @@ function TWidgetArray.toStr: String;
 var
   i, len: Integer;
 begin
-  len := Length(self);
+  len := Length(Self);
   Result := '[';
   for i := 0 to len - 1 do
   begin
     if i > 0 then
       Result := Result + ', ';
-    Result := Result + self[i].toStr;
+    Result := Result + Self[i].toStr;
   end;
   Result := Result + '];';
 end;
 
 function TWidget.createFromID(id: Integer): TWidget;
 begin
-  self.create(0, hook_Client_getWidgets, id shr 16, id and $FFFF, 'TWidget.create');
+  Self.create(0, hook_Client_getWidgets, id shr 16, id and $FFFF, 'TWidget.create');
 end;
 
 function TWidget.getBoundsIndex: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getBoundsIndex);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getBoundsIndex);
 end;
 
 function TWidget.getWidth: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getWidth);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getWidth);
 end;
 
 function TWidget.getHeight: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getHeight);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getHeight);
 end;
 
 function TWidget.getRelativeX: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getRelativeX);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getRelativeX);
 end;
 
 function TWidget.getRelativeY: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getRelativeY);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getRelativeY);
 end;
 
 function TWidget.getWidgetX: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getX);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getX);
 end;
 
 function TWidget.getWidgetY: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getY);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getY);
 end;
 
 function TWidget.getBoundsX: Integer;
 var
   len: Integer;
 begin
-  Result := self.getBoundsIndex;
+  Result := Self.getBoundsIndex;
   if (Result <> -1) then
   begin
     len := reflectLib.getFieldArraySize(0, hook_Client_getWidgetBoundsX);
     if (Result < len) then
-      exit(reflectLib.getFieldArrayInt(0, hook_Client_getWidgetBoundsX, Result));
-    exit(0);
+      Exit(reflectLib.getFieldArrayInt(0, hook_Client_getWidgetBoundsX, Result));
+    Exit(0);
   end;
 end;
 
@@ -97,95 +97,95 @@ function TWidget.getBoundsY: Integer;
 var
   len: Integer;
 begin
-  Result := self.getBoundsIndex;
+  Result := Self.getBoundsIndex;
   if (Result <> -1) then
   begin
     len := reflectLib.getFieldArraySize(0, hook_Client_getWidgetBoundsY);
     if (Result < len) then
-      exit(reflectLib.getFieldArrayInt(0, hook_Client_getWidgetBoundsY, Result));
-    exit(0);
+      Exit(reflectLib.getFieldArrayInt(0, hook_Client_getWidgetBoundsY, Result));
+    Exit(0);
   end;
 end;
 
 function TWidget.getScrollX: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getScrollX);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getScrollX);
 end;
 
 function TWidget.getScrollY: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getScrollY);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getScrollY);
 end;
 
 function TWidget.getActions: TStringArray;
 begin
-  Result := reflectLib.getFieldStringArray(self.ref, hook_Widget_getActions);
+  Result := reflectLib.getFieldStringArray(Self.ref, hook_Widget_getActions);
 end;
 
 function TWidget.getName: String;
 begin
-  Result := reflectLib.getFieldString(self.ref, hook_Widget_getName);
+  Result := reflectLib.getFieldString(Self.ref, hook_Widget_getName);
 end;
 
 function TWidget.getText: String;
 begin
-  Result := reflectLib.getFieldString(self.ref, hook_Widget_getText);
+  Result := reflectLib.getFieldString(Self.ref, hook_Widget_getText);
 end;
 
 function TWidget.getType: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getType);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getType);
 end;
 
 function TWidget.getID: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getID);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getID);
 end;
 
 function TWidget.getIndex: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getIndex);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getIndex);
 end;
 
 function TWidget.getItemID: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getItemID);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getItemID);
 end;
 
 function TWidget.getStackSize: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getStackSize);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getStackSize);
 end;
 
 function TWidget.getRootID: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getRootID);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getRootID);
 end;
 
 function TWidget.getBorderThickness: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getBorderThickness);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getBorderThickness);
 end;
 
 function TWidget.getContentIds: TIntegerArray;
 begin
-  Result := reflectLib.getFieldIntArray(self.ref, hook_Widget_getContentIDs);
+  Result := reflectLib.getFieldIntArray(Self.ref, hook_Widget_getContentIDs);
 end;
 
 function TWidget.getStackSizes: TIntegerArray;
 begin
-  Result := reflectLib.getFieldIntArray(self.ref, hook_Widget_getStackSizes);
+  Result := reflectLib.getFieldIntArray(Self.ref, hook_Widget_getStackSizes);
 end;
 
 function TWidget.getLoopCycleStatus: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_Widget_getLoopCycleStatus);
+  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getLoopCycleStatus);
 end;
 
 function TWidget.isValid: Boolean;
 begin
-  Result := (not self.isNull)
-    and (rsclient.getGameCycle < (self.getLoopCycleStatus + 20));
+  Result := (not Self.isNull)
+    and (rsclient.getGameCycle < (Self.getLoopCycleStatus + 20));
 end;
 
 function TWidget.getChildren: TWidgetArray;
@@ -193,13 +193,13 @@ var
   len, c, i: Integer;
   temp: TWidget;
 begin
-  len := reflectLib.getFieldArraySize(self.ref, hook_Widget_getChildren);
+  len := reflectLib.getFieldArraySize(Self.ref, hook_Widget_getChildren);
   c:= 0;
   SetLength(Result, len);
 
   for i := 0 to (len - 1) do
   begin
-    temp.create(self.ref, hook_Widget_getChildren, i, 'TWidget.getChildren[' + toString(i) + ']');
+    temp.create(Self.ref, hook_Widget_getChildren, i, 'TWidget.getChildren[' + toString(i) + ']');
     if temp.isNull then
     begin
       temp.free;
@@ -214,12 +214,12 @@ end;
 
 function TWidget.getChild(index: Integer): TWidget;
 begin
-  Result.create(self.ref, hook_Widget_getChildren, index, 'TWidget.getChild');
+  Result.create(Self.ref, hook_Widget_getChildren, index, 'TWidget.getChild');
 end;
 
 function TWidget.getRoot: TWidget;
 begin
-  Result.create(self.ref, hook_Widget_getRoot, 'TWidget.getRoot');
+  Result.create(Self.ref, hook_Widget_getRoot, 'TWidget.getRoot');
 end;
 
 function TWidget.getParentID: Integer;
@@ -229,11 +229,11 @@ var
   widgetNodes: TNodeArray;
   node, next: TNode;
 begin
-  id := self.getRootID;
+  id := Self.getRootID;
   if (id > 0) then
-    exit(id);
+    Exit(id);
 
-  id := (self.getID shr 16);
+  id := (Self.getID shr 16);
   try
     widgetHashTable.create(0, hook_client_getWidgetNodeTable, 'TWidget.getParentID');
     widgetNodes := widgetHashTable.getNodes;
@@ -249,7 +249,7 @@ begin
           Result := node.getUID;
           node.free;
           next.free;
-          exit;
+          Exit;
         end;
         next := node.getNext;
         node.free;
@@ -271,9 +271,9 @@ function TWidget.getParent: TWidget;
 var
   pid: Integer;
 begin
-  pid := self.getParentID;
+  pid := Self.getParentID;
   if (pid > 0) then
-    Result.createFromID(self.getParentID)
+    Result.createFromID(Self.getParentID)
       else
         Result.create(0);
 end;
@@ -282,11 +282,11 @@ function TWidget.isHidden: Boolean;
 var
   parent: TWidget;
 begin
-  parent := self.getParent;
+  parent := Self.getParent;
   if (not parent.isNull) then
     Result := parent.isHidden
       else
-        Result := reflectLib.getFieldBoolean(self.ref, hook_Widget_isHidden);
+        Result := reflectLib.getFieldBoolean(Self.ref, hook_Widget_isHidden);
   parent.free;
 end;
 
@@ -297,17 +297,17 @@ var
   i: Integer;
 begin
   Result := Point(0, 0);
-  parent := self.getParent;
+  parent := Self.getParent;
   try
     if parent.isNull then
     begin
-      Exit(Point(self.getBoundsX, self.getBoundsY));
+      Exit(Point(Self.getBoundsX, Self.getBoundsY));
     end else
     begin
       Result := parent.getPosition;
       Result := Point(Result.x - parent.getScrollX, Result.y - parent.getScrollY);
     end;
-    Result := Point(Result.x + self.getRelativeX, Result.y + self.getRelativeY);
+    Result := Point(Result.x + Self.getRelativeX, Result.y + Self.getRelativeY);
   finally
     parent.free;
   end;
@@ -315,26 +315,26 @@ end;
 
 function TWidget.getX: Integer;
 begin
-  Result := self.getPosition.x;
+  Result := Self.getPosition.x;
 end;
 
 function TWidget.getY: Integer;
 begin
-  Result := self.getPosition.y;
+  Result := Self.getPosition.y;
 end;
 
 function TWidget.getBounds: TBox;
 var
   p: TPoint;
 begin
-  p := self.getPosition;
-  Result := PointToBox(p, Point(p.x + self.getWidth, p.y + self.getHeight));
+  p := Self.getPosition;
+  Result := PointToBox(p, Point(p.x + Self.getWidth, p.y + Self.getHeight));
 end;
 
 function TWidget.toStr: String;
 begin
-  Result := 'Widget[' + toString(self.getID shr 16) + ', '
-    + toString(self.getID and $ffff) + ']' ;
+  Result := 'Widget[' + toString(Self.getID shr 16) + ', '
+    + toString(Self.getID and $ffff) + ']' ;
 end;
 
 

@@ -14,17 +14,17 @@ type
 
 function TNode.getNext: TNode;
 begin
-  Result.create(self.ref, hook_Node_getNext, 'TNode.getNext');
+  Result.create(Self.ref, hook_Node_getNext, 'TNode.getNext');
 end;
 
 function TNode.getPrevious: TNode;
 begin
-  Result.create(self.ref, hook_Node_getPrevious, 'TNode.getPrevious');
+  Result.create(Self.ref, hook_Node_getPrevious, 'TNode.getPrevious');
 end;
 
 function TNode.getUID: Integer;
 begin
-  Result := reflectLib.getFieldLongL(self.ref, hook_Node_getUID);
+  Result := reflectLib.getFieldLongL(Self.ref, hook_Node_getUID);
 end;
 
 procedure TNodeArray.free;
@@ -39,7 +39,7 @@ end;
 
 function THashTable.getSize: Integer;
 begin
-  Result := reflectLib.getFieldInt(self.ref, hook_HashTable_getSize);
+  Result := reflectLib.getFieldInt(Self.ref, hook_HashTable_getSize);
 end;
 
 function THashTable.getNodes: TNodeArray;
@@ -47,13 +47,13 @@ var
   len, c, i: Integer;
   temp: TNode;
 begin
-  len := self.getSize;
+  len := Self.getSize;
   c:= 0;
   SetLength(Result, len);
 
   for i := 0 to (len - 1) do
   begin
-    temp.create(self.ref, hook_HashTable_getNodes, i, 'THashTable.getNodes[' + toString(i) + ']');
+    temp.create(Self.ref, hook_HashTable_getNodes, i, 'THashTable.getNodes[' + toString(i) + ']');
     if temp.isNull then
     begin
       temp.free;
@@ -68,5 +68,45 @@ end;
 
 function TCache.getHashTable: THashTable;
 begin
-  Result.create(self.ref, hook_Cache_getHashTable, 'TCache.getHashTable');
+  Result.create(Self.ref, hook_Cache_getHashTable, 'TCache.getHashTable');
+end;
+
+function TCache.getComposite(id: Integer): PtrUInt;
+var
+  hashTable: THashTable;
+  nodes: TNodeArray;
+  i, len: Integer;
+  node, next: TNode;
+begin
+  hashTable := Self.getHashTable;
+  nodes := hashTable.getNodes;
+  try
+    len := Length(nodes);
+    writeln('len: ', len);
+    for i := 0 to (len - 1) do
+    begin
+      node := nodes[i].getNext;
+
+      while (nodes[i].getUID <> node.getUID) do
+      begin
+        writeln(reflectLib.getFieldString(node.ref, hook_NPCComposite_getName));
+        if (id = node.getUID) then
+        begin
+          Result := node.ref;
+          next.free;
+          Exit;
+        end;
+
+        next := node.getNext;
+        node.free;
+        node := next;
+      end;
+
+      node.free;
+      next.free;
+    end;
+  finally
+    nodes.free;
+    hashTable.free;
+  end;
 end;

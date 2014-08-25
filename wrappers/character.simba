@@ -9,5 +9,93 @@ Character contains the Character record and accessors
 type
   TCharacter = type(TRSObject);
 
+function TCharacter.getAnimation: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_Character_getAnimation);
+end;
 
+function TCharacter.getCombatCycle: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_Character_getCombatCycle);
+end;
+
+function TCharacter.getHealth: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_Character_getHealth);
+end;
+
+function TCharacter.getHitCycles: TIntegerArray;
+begin
+  Result := reflectLib.getFieldIntArray(Self.ref, hook_Character_getHitCycles);
+end;
+
+function TCharacter.getHitDamages: TIntegerArray;
+begin
+  Result := reflectLib.getFieldIntArray(Self.ref, hook_Character_getHitDamages);
+end;
+
+function TCharacter.getHitTypes: TIntegerArray;
+begin
+  Result := reflectLib.getFieldIntArray(Self.ref, hook_Character_getHitTypes);
+end;
+
+function TCharacter.getInteractingIndex: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_Character_getInteractingIndex);
+end;
+
+function TCharacter.getMaxHealth: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_Character_getMaxHealth);
+end;
+
+function TCharacter.getOrientation: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_Character_getOrientation);
+end;
+
+function TCharacter.getQueueLength: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_Character_getQueueLength);
+end;
+
+function TCharacter.getQueueTraversed: TBoolArray;
+begin
+  Result := reflectLib.getFieldBooleanArray(Self.ref, hook_Character_getQueueTraversed);
+end;
+
+function TCharacter.getQueueX: TIntegerArray;
+begin
+  Result := reflectLib.getFieldIntArray(Self.ref, hook_Character_getQueueX);
+end;
+
+function TCharacter.getQueueY: TIntegerArray;
+begin
+  Result := reflectLib.getFieldIntArray(Self.ref, hook_Character_getQueueY);
+end;
+
+function TCharacter.getText: String;
+begin
+  Result := reflectLib.getFieldString(Self.ref, hook_Character_getText);
+end;
+
+function TCharacter.getX: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_Character_getX);
+end;
+
+function TCharacter.getY: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_Character_getY);
+end;
+
+function TCharacter.getTile: TPoint;
+begin
+  Result := Point(Self.getX, self.getY);
+end;
+
+function TCharacter.isInSequence: Boolean;
+begin
+  Result := reflectLib.getFieldBoolean(Self.ref, hook_Character_isInSequence);
+end;
 

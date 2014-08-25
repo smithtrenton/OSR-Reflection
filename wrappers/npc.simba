@@ -1,0 +1,165 @@
+(*
+Npc
+====
+
+Npc contains the Npc record and accessors
+
+*)
+
+{$include_once ..\wrappers\character.simba}
+
+type
+  TNPCComposite = type(TRSObject);
+  TNPC = record(TCharacter)
+    composite: TNpcComposite;
+  end;
+  TNPCArray = array of TNPC;
+
+function TNPCComposite.getActions: TStringArray;
+begin
+  Result := reflectLib.getFieldStringArray(Self.ref, hook_NPCComposite_getActions);
+end;
+
+function TNPCComposite.getCombatLevel: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_NPCComposite_getCombatLevel);
+end;
+
+function TNPCComposite.getID: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_NPCComposite_getID);
+end;
+
+function TNPCComposite.getName: String;
+begin
+  Result := reflectLib.getFieldString(Self.ref, hook_NPCComposite_getName);
+end;
+
+function TNPCComposite.getSettingID: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_NPCComposite_getSettingID);
+end;
+
+function TNPCComposite.getTransformIDs: TIntegerArray;
+begin
+  Result := reflectLib.getFieldIntArray(Self.ref, hook_NPCComposite_getTransformIDs);
+end;
+
+function TNPCComposite.getVarBitID: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_NPCComposite_getVarBitID);
+end;
+
+function TNPCComposite.isValid: Boolean;
+begin
+  Result := (Self.ref > 0) and (Length(Self.getName) > 0) and (Self.getName <> 'null');
+end;
+
+function TNPC.getComposite: TNPCComposite;
+begin
+  if not(composite.isNull) then
+    Exit(composite);
+
+  composite.create(Self.ref, hook_NPC_getComposite, 'TNPC.getComposite');
+  {if (not composite.isValid) then
+  begin
+    writeln('invalid composite {ref: ', Self.ref, ' id: ', composite.getID, ' name: ', composite.getName);
+  end;}
+  Exit(composite);
+end;
+
+function TNPC.getActions: TStringArray;
+begin
+  if (composite.isNull) then
+    Self.getComposite;
+  Result := Self.composite.getActions;
+end;
+
+function TNPC.getCombatLevel: Integer;
+begin
+  if (composite.isNull) then
+    Self.getComposite;
+    Result := Self.composite.getCombatLevel;
+end;
+
+function TNPC.getID: Integer;
+begin
+  if (composite.isNull) then
+    Self.getComposite;
+    Result := Self.composite.getID;
+end;
+
+function TNPC.getName: String;
+begin
+  if (composite.isNull) then
+    Self.getComposite;
+    Result := Self.composite.getName;
+end;
+
+procedure TNPC.free; override;
+begin
+  composite.free;
+  reflectLib.freeObject(Self.ref);
+end;
+
+procedure TNPCArray.free;
+var
+  i, len: Integer;
+begin
+  len := Length(Self);
+  for i := 0 to len - 1 do
+    Self[i].free;
+  setLength(Self, 0);
+end;
+
+function TNPC.toString: String;
+begin
+  Exit(Format('%s(lvl:%d): %d', [Self.getName, Self.getCombatLevel, Self.getID]));
+end;
+
+procedure TNPCArray.swap(index1, index2: Integer);
+var
+  temp: TNPC;
+  len: Integer;
+begin
+  len := Length(Self);
+  if (index1 > len) or (index1 < 0) then
+  begin
+    writeln('** TNPCArray/', GetGlobalName(@Self),
+      ': Index = "', index1, '" out of bounds **');
+    Exit;
+  end if (index2 > len) or (index2 < 0) then
+  begin
+    writeln('** TNPCArray/', GetGlobalName(@Self),
+      ': Index = "', index2, '" out of bounds **');
+    Exit;
+  end;
+  temp := Self[index1];
+  Self[index1] := Self[index2];
+  Self[index2] := temp;
+end;
+
+procedure TNPCArray.remove(index: Integer);
+var
+  len: Integer;
+begin
+  len := Length(Self) - 1;
+  Self.swap(index, len);
+  Self[len].free;
+  SetLength(Self, len);
+end;
+
+procedure TNPCArray.debug;
+var
+  i, len: Integer;
+  str: String;
+begin
+  len := Length(Self);
+  str := GetGlobalName(@Self) + '(len = ' + toString(len) + ') :';
+  for i := 0 to len - 1 do
+  begin
+    str := str + #13#10#9 + Self[i].toString;
+  end;
+  writeln(str);
+end;
+

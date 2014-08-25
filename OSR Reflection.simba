@@ -18,6 +18,7 @@ const
 
 //API Includes
 {$include_once api\widgets.simba}
+{$include_once api\npcs.simba}
 
 //Global Destructor
 procedure FreeOSRReflection;

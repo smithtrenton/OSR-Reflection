@@ -15,61 +15,61 @@ type
 
 procedure TRSObject.create(_ref: PtrUInt);
 begin
-  self.ref := _ref;
+  Self.ref := _ref;
 end;
 
 procedure TRSObject.create(_ref: PtrUInt; hook: THook; name: String); overload;
 begin
-  self.create(reflectLib.getFieldObject(_ref, hook, name));
+  Self.create(reflectLib.getFieldObject(_ref, hook, name));
 end;
 
 procedure TRSObject.create(_ref: PtrUInt; hook: THook; index: Integer; name: String); overload;
 begin
-  self.create(reflectLib.getFieldArrayObject(_ref, hook, index, name));
+  Self.create(reflectLib.getFieldArrayObject(_ref, hook, index, name));
 end;
 
 procedure TRSObject.create(_ref: PtrUInt; hook: THook; x, y: Integer; name: String); overload;
 begin
-  self.create(reflectLib.getFieldArray2DObject(_ref, hook, x, y, name));
+  Self.create(reflectLib.getFieldArray2DObject(_ref, hook, x, y, name));
 end;
 
 procedure TRSObject.create(_ref: PtrUInt; hook: THook; x, y, z: Integer; name: String); overload;
 begin
-  self.create(reflectLib.getFieldArray3DObject(_ref, hook, x, y, z, name));
+  Self.create(reflectLib.getFieldArray3DObject(_ref, hook, x, y, z, name));
 end;
 
 procedure TRSObject.create(_ref: PtrUInt; hook: THook); overload;
 begin
-  self.create(reflectLib.getFieldObject(_ref, hook));
+  Self.create(reflectLib.getFieldObject(_ref, hook));
 end;
 
 procedure TRSObject.create(_ref: PtrUInt; hook: THook; index: Integer); overload;
 begin
-  self.create(reflectLib.getFieldArrayObject(_ref, hook, index));
+  Self.create(reflectLib.getFieldArrayObject(_ref, hook, index));
 end;
 
 procedure TRSObject.create(_ref: PtrUInt; hook: THook; x, y: Integer); overload;
 begin
-  self.create(reflectLib.getFieldArray2DObject(_ref, hook, x, y));
+  Self.create(reflectLib.getFieldArray2DObject(_ref, hook, x, y));
 end;
 
 procedure TRSObject.create(_ref: PtrUInt; hook: THook; x, y, z: Integer); overload;
 begin
-  self.create(reflectLib.getFieldArray3DObject(_ref, hook, x, y, z));
+  Self.create(reflectLib.getFieldArray3DObject(_ref, hook, x, y, z));
 end;
 
 procedure TRSObject.free;
 begin
-  reflectLib.freeObject(self.ref);
-  self.ref := 0;
+  reflectLib.freeObject(Self.ref);
+  //Self.ref := 0;
 end;
 
 function TRSObject.isNull: Boolean;
 begin
-  Result := reflectLib.isNull(self.ref);
+  Result := reflectLib.isNull(Self.ref);
 end;
 
 function TRSObject.isEqual(rsobj: TRSObject): Boolean;
 begin
-  Result := reflectLib.isEqual(self.ref, rsobj.ref);
+  Result := reflectLib.isEqual(Self.ref, rsobj.ref);
 end;

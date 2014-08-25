@@ -20,23 +20,23 @@ type
 
 procedure TSmartObject.create(_ref: PtrUInt; _name: String; _hook: THook);
 begin
-  self.ref := _ref;
-  self.name := _name;
-  self.hook := _hook;
+  Self.ref := _ref;
+  Self.name := _name;
+  Self.hook := _hook;
 end;
 
 function TSmartObject.isNull: Boolean;
 begin
-  Result := (self.ref = 0) and self.hook.isNull;
+  Result := (Self.ref = 0) and Self.hook.isNull;
 end;
 
 function TSmartObject.toStr: String;
 begin
-  if self.name = '' then
+  if Self.name = '' then
     Result := 'SmartObject: '
   else
-    Result := self.name + ': ';
-  Result := Result + toString(self.ref)+ '    ' + self.hook.toStr;
+    Result := Self.name + ': ';
+  Result := Result + toString(Self.ref)+ '    ' + Self.hook.toStr;
 end;
 
 procedure TSmartObjectArray.setSize(c: Integer);
@@ -51,22 +51,22 @@ end;
 
 procedure TSmartObjectArray.incSize(c: Integer);
 begin
-  self.SetSize(self.getSize + c);
+  Self.SetSize(Self.getSize + c);
 end;
 
 procedure TSmartObjectArray.incSize; overload;
 begin
-  self.IncSize(1);
+  Self.IncSize(1);
 end;
 
 procedure TSmartObjectArray.decSize(c: Integer);
 begin
-  self.SetSize(self.getSize - c);
+  Self.SetSize(Self.getSize - c);
 end;
 
 procedure TSmartObjectArray.decSize; overload;
 begin
-  self.DecSize(1);
+  Self.DecSize(1);
 end;
 
 function TSmartObjectArray.get(index: Integer): TSmartObject;
@@ -78,7 +78,7 @@ function TSmartObjectArray.getName(_name: String; var index: Integer): TSmartObj
 var
   hi, i: Integer;
 begin
-  hi := self.getSize - 1;
+  hi := Self.getSize - 1;
   for i := 0 to hi do
     if self[i].name = _name then
     begin
@@ -106,7 +106,7 @@ end;
 
 function TSmartObjectArray.setAt(index: Integer; so: TSmartObject): Boolean;
 begin
-  if (index < self.getSize) and (index > -1) then
+  if (index < Self.getSize) and (index > -1) then
   begin
     self[index] := so;
     Exit(True);
@@ -120,8 +120,8 @@ end;
 
 procedure TSmartObjectArray.add(so: TSmartObject);
 begin
-  self.incSize;
-  self.setAt(self.getSize - 1, so);
+  Self.incSize;
+  Self.setAt(Self.getSize - 1, so);
 end;
 
 procedure TSmartObjectArray.add(ref: PtrUInt; hook: THook; name: String); overload;
@@ -129,7 +129,7 @@ var
   so: TSmartObject;
 begin
   so.create(ref, name, hook);
-  self.add(so);
+  Self.add(so);
 end;
 
 procedure TSmartObjectArray.swap(index1, index2: Integer);
@@ -137,7 +137,10 @@ var
   temp: TSmartObject;
   len: Integer;
 begin
-  len := self.getSize;
+  if (index1 = index2) then
+    Exit;
+
+  len := Self.getSize;
   if (index1 > len) or (index1 < 0) then
   begin
     writeln('** TSmartObjectArray/', Between('"', '"', toString(@self)),
@@ -149,6 +152,7 @@ begin
       ': Index = "', index2, '" out of bounds **');
     Exit;
   end;
+
   temp := self[index1];
   self[index1] := self[index2];
   self[index2] := temp;
@@ -156,41 +160,41 @@ end;
 
 procedure TSmartObjectArray.remove(index: Integer);
 begin
-  self.swap(index, self.getSize-1);
-  self.decSize;
+  Self.swap(index, Self.getSize-1);
+  Self.decSize;
 end;
 
 procedure TSmartObjectArray.removeName(_name: String);
 var
   i: Integer;
 begin
-  while not self.getName(_name, i).isNull do
-    self.remove(i);
+  while not Self.getName(_name, i).isNull do
+    Self.remove(i);
 end;
 
 procedure TSmartObjectArray.removeRef(_ref: PtrUInt);
 var
   i: Integer;
 begin
-  while not self.getRef(_ref, i).isNull do
-    self.remove(i);
+  while not Self.getRef(_ref, i).isNull do
+    Self.remove(i);
 end;
 
 procedure TSmartObjectArray.removeAll;
 begin
-  self.decSize(self.getSize);
+  Self.decSize(Self.getSize);
 end;
 
 procedure TSmartObjectArray.create;
 begin
-  self.setSize(0);
+  Self.setSize(0);
 end;
 
 function TSmartObjectArray.toStr: String;
 var
   i, len: Integer;
 begin
-  len := self.getSize;
+  len := Self.getSize;
   Result := Between('"', '"', toString(@self));
   if (len < 1) then
     Exit(Result + ': TSmartObjectsArray is empty');

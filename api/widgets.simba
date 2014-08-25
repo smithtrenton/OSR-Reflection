@@ -28,7 +28,7 @@ begin
 
   for i := 0 to (len - 1) do
   begin
-    if not self.isValidWidget(i) then
+    if not Self.isValidWidget(i) then
       continue;
     Result[c] := i;
     inc(c);
@@ -39,7 +39,7 @@ end;
 
 function TWidgetApi.getWidget(groupIndex, widgetIndex: Integer): TWidget;
 begin
-  if self.isValidWidget(groupIndex) then
+  if Self.isValidWidget(groupIndex) then
     Result.create(0, hook_Client_getWidgets,
       groupIndex, widgetIndex, 'getWidget');
 end;
@@ -48,7 +48,7 @@ function TWidgetApi.getWidget(groupIndex, parentIndex, childIndex: Integer): TWi
 var
   parent: TWidget;
 begin
-  if self.isValidWidget(groupIndex) then
+  if Self.isValidWidget(groupIndex) then
   begin
     parent.create(0, hook_Client_getWidgets,
       groupIndex, parentIndex, 'getWidget2');
@@ -63,12 +63,12 @@ var
   temp: TWidget;
 begin
   c := 0;
-  if self.isValidWidget(index) then
+  if Self.isValidWidget(index) then
   begin
-    SetLength(Result, 1000);
     temp := widgetAPI.getWidget(index, c);
     while (not temp.isNull) do
     begin
+      SetLength(Result, c+1);
       Result[c] := temp;
       inc(c);
       temp := widgetAPI.getWidget(index, c);

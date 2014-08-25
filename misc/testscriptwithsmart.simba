@@ -6,10 +6,10 @@ var
   Smart: TSmartClient;
 
 begin
+  SMARTSettings.ShowConsole := False;
+  SMARTSettings.ForceNew := False;
   Smart.Init;
   SetupOSRReflection(Smart.Target);
-
-
 
   Smart.Free;
 end.
