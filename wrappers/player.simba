@@ -1,0 +1,142 @@
+(*
+Player
+======
+
+Player contains the Player record and accessors
+
+*)
+
+{$include_once ..\wrappers\character.simba}
+
+type
+  TPlayer = type(TCharacter);
+  TPlayerArray = array of TPlayer;
+  TLocalPlayer = type(TPlayer);
+
+function TPlayer.getCombatLevel: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_Player_getCombatLevel);
+end;
+
+{function TPlayer.getModel: TModel;
+begin
+  Result.create(Self.ref, hook_Player_getModel);
+end;}
+
+function TPlayer.getName: String;
+begin
+  Result := reflectLib.getFieldString(Self.ref, hook_Player_getName);
+end;
+
+function TPlayer.toString: String;
+begin
+  Result := Format('%s(lvl:%d)', [Self.getName, Self.getCombatLevel]);
+end;
+
+procedure TPlayerArray.debug;
+var
+  i, len: Integer;
+  str: String;
+begin
+  len := Length(Self);
+  str := GetGlobalName(@Self) + '(len = ' + toString(len) + ') :';
+  for i := 0 to len - 1 do
+  begin
+    str := str + #13#10#9 + Self[i].toString;
+  end;
+  writeln(str);
+end;
+
+procedure TPlayerArray.free;
+var
+  i, len: Integer;
+begin
+  len := Length(Self);
+  for i := 0 to len - 1 do
+    Self[i].free;
+  setLength(Self, 0);
+end;
+
+procedure TPlayerArray.swap(index1, index2: Integer);
+var
+  temp: TPlayer;
+  len: Integer;
+begin
+  len := Length(Self);
+  if (index1 > len) or (index1 < 0) then
+  begin
+    writeln('** TPlayerArray/', GetGlobalName(@Self),
+      ': Index = "', index1, '" out of bounds **');
+    Exit;
+  end if (index2 > len) or (index2 < 0) then
+  begin
+    writeln('** TPlayerArray/', GetGlobalName(@Self),
+      ': Index = "', index2, '" out of bounds **');
+    Exit;
+  end;
+  temp := Self[index1];
+  Self[index1] := Self[index2];
+  Self[index2] := temp;
+end;
+
+procedure TPlayerArray.remove(index: Integer);
+var
+  len: Integer;
+begin
+  len := Length(Self) - 1;
+  Self.swap(index, len);
+  Self[len].free;
+  SetLength(Self, len);
+end;
+
+procedure TLocalPlayer.create; overload;
+begin
+  Self.create(0, hook_Client_getLocalPlayer, 'TLocalPlayer.create');
+end;
+
+function TLocalPlayer.getLevel(index: Integer): Integer;
+begin
+  Result := reflectLib.getFieldArrayInt(0, hook_Client_getLevels, index);
+end;
+
+function TLocalPlayer.getRealLevel(index: Integer): Integer;
+begin
+  Result := reflectLib.getFieldArrayInt(0, hook_Client_getRealLevels, index);
+end;
+
+function TLocalPlayer.getExperience(index: Integer): Integer;
+begin
+  Result := reflectLib.getFieldArrayInt(0, hook_Client_getExperiences, index);
+end;
+
+function TLocalPlayer.getLevels: TIntegerArray;
+begin
+  Result := reflectLib.getFieldIntArray(0, hook_Client_getLevels);
+end;
+
+function TLocalPlayer.getRealLevels: TIntegerArray;
+begin
+  Result := reflectLib.getFieldIntArray(0, hook_Client_getRealLevels);
+end;
+
+function TLocalPlayer.getExperiences: TIntegerArray;
+begin
+  Result := reflectLib.getFieldIntArray(0, hook_Client_getExperiences);
+end;
+
+function TLocalPlayer.getEnergy: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getEnergy);
+end;
+
+function TLocalPlayer.getPlane: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getPlane);
+end;
+
+function TLocalPlayer.getWeight: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getWeight);
+end;
+
+

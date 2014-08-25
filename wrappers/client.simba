@@ -37,6 +37,11 @@ begin
   Result := reflectLib.getFieldInt(0, hook_Client_getBaseY);
 end;
 
+function TRSClient.getBaseTile: TPoint;
+begin
+  Result := Point(Self.getBaseX, Self.getBaseY);
+end;
+
 function TRSClient.getCameraPitch: Integer;
 begin
   Result := reflectLib.getFieldInt(0, hook_Client_getCameraPitch);
@@ -60,6 +65,11 @@ end;
 function TRSClient.getCameraZ: Integer;
 begin
   Result := reflectLib.getFieldInt(0, hook_Client_getCameraZ);
+end;
+
+function TRSClient.getPlane: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getPlane);
 end;
 
 function TRSClient.getMapAngle: Integer;
@@ -107,14 +117,8 @@ begin
   Result := reflectLib.getFieldInt(0, hook_Client_getMenuY);
 end;
 
-function TRSClient.getPlane: Integer;
-begin
-  Result := reflectLib.getFieldInt(0, hook_Client_getPlane);
-end;
-
 function TRSClient.isMenuOpen: Boolean;
 begin
   Result := reflectLib.getFieldBoolean(0, hook_Client_isMenuOpen);
 end;
-
 

@@ -8,3 +8,21 @@ Constants contains globals and constants
 
 type
   TApi = type(Pointer);
+
+const
+  _LOCAL_XY_SHIFT = 7;
+
+
+var
+  _SIN_TABLE, _COS_TABLE: array[0..2047] of Integer;
+
+procedure _setCurves;
+var
+  i: Integer;
+begin
+  for i := 0 to 2047 do
+  begin
+    _SIN_TABLE[i] := Round(65536.0 * Sin(i * 0.0030679614999999999));
+    _COS_TABLE[i] := Round(65536.0 * Cos(i * 0.0030679614999999999));
+  end;
+end;

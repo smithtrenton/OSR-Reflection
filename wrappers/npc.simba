@@ -96,6 +96,11 @@ begin
     Result := Self.composite.getName;
 end;
 
+function TNPC.toString: String;
+begin
+  Exit(Format('%s(lvl:%d): %d at (%d, %d)', [Self.getName, Self.getCombatLevel, Self.getID, Self.getX, Self.getY]));
+end;
+
 procedure TNPC.free; override;
 begin
   composite.free;
@@ -110,11 +115,6 @@ begin
   for i := 0 to len - 1 do
     Self[i].free;
   setLength(Self, 0);
-end;
-
-function TNPC.toString: String;
-begin
-  Exit(Format('%s(lvl:%d): %d', [Self.getName, Self.getCombatLevel, Self.getID]));
 end;
 
 procedure TNPCArray.swap(index1, index2: Integer);

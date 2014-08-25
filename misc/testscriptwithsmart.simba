@@ -4,12 +4,17 @@ program new;
 
 var
   Smart: TSmartClient;
+  players: TPlayerArray;
 
 begin
   SMARTSettings.ShowConsole := False;
   SMARTSettings.ForceNew := False;
   Smart.Init;
   SetupOSRReflection(Smart.Target);
+
+  players := playerApi.getPlayers;
+  players.debug;
+  players.free;
 
   Smart.Free;
 end.

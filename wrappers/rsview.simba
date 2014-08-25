@@ -1,0 +1,55 @@
+(*
+RSView
+======
+
+RSView contains view-related conversion functions
+
+*)
+
+function TRSClient.getTileHeight(tile: TPoint): Integer;
+var
+  x, y, plane, ground: Integer;
+  base: TPoint;
+begin
+  Result := 0;
+  base := Self.getBaseTile;
+  x := tile.x - base.x;
+  y := tile.y - base.y;
+  if ((not InRange(x, 0, 104)) or (not InRange(y, 0, 104))) then
+    Exit;
+  plane := Self.getPlane;
+  ground := reflectLib.getFieldArray3DByte(0, hook_client_getTileSettings, 1, x, y);
+  if ((plane < 3) and ((ground and 2) <> 0)) then
+    inc(plane);
+
+  Result := -reflectLib.getFieldArray3DInt(0, hook_client_getTileHeights, plane, x, y);
+end;
+
+function TRSClient.worldToScreen(x, y, z: Extended): TPoint;
+var
+  yaw, pitch, cosX, cosY, sinX, sinY, temp: Extended;
+begin
+  Result := Point(-1, -1);
+  if (not InRange(Round(x), 128, 13056)) or (not InRange(Round(y), 128, 13056)) then
+    Exit;
+  z -= z;
+  x -= Self.getCameraX;
+  y -= Self.getCameraY;
+  z -= Self.getCameraZ;
+  yaw := Self.getCameraYaw;
+  pitch := Self.getCameraPitch;
+  cosX := _COS_TABLE[Floor(yaw)];
+  cosY := _COS_TABLE[Floor(pitch)];
+  sinX := _SIN_TABLE[Floor(yaw)];
+  sinY := _SIN_TABLE[Floor(pitch)];
+  temp := (Round((cosX * x) + (y * sinX)) shr 16);
+  y := (Round((y * cosX) - (x * sinX)) shr 16);
+  x := Round(temp);
+  temp := (Round((z * cosY) - (y * sinY)) shr 16);
+  y := (Round((z * sinY) - ((-cosY) * y)) shr 16);
+  z := Round(temp);
+  if (y < 50) then
+    Exit;
+  Result.x := Round((Floor(x) shl 9) / y) + 259;
+  Result.y := Round((Floor(z) shl 9) / y) + 170;
+end;

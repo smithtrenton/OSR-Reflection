@@ -1,0 +1,230 @@
+(*
+Players
+=======
+
+Players contains the player api methods.
+
+*)
+
+{$include_once ..\wrappers\player.simba}
+
+type
+  TPlayerApi = type(TApi);
+var
+  playerApi: TPlayerApi;
+
+function TPlayerApi.getPlayers: TPlayerArray;
+var
+  len, i, c: Integer;
+  player: TPlayer;
+begin
+  len := reflectLib.getFieldArraySize(0, hook_Client_getLocalPlayers);
+  SetLength(Result, len);
+  c := 0;
+  for i:= 0 to (len - 1) do
+  begin
+    player.create(0, hook_Client_getLocalPlayers, i);
+    if player.isNull then
+    begin
+      player.free;
+      continue;
+    end;
+    Result[c] := player;
+    Inc(c);
+  end;
+  SetLength(Result, c);
+end;
+
+function TPlayerApi.getPlayers(lvlArray: TIntegerArray): TPlayerArray; overload;
+var
+  i, len: Integer;
+begin
+  Result := Self.getPlayers;
+  len := Length(Result);
+  if (len > 0) then
+  begin
+    i := 0;
+    while (i < Length(Result)) do
+    begin
+      if not(InIntArray(lvlArray, Result[i].getCombatLevel)) then
+        Result.remove(i)
+      else
+        Inc(i);
+    end;
+  end;
+end;
+
+function TPlayerApi.getPlayers(strings: TStringArray): TPlayerArray; overload;
+var
+  i, len: Integer;
+begin
+  Result := Self.getPlayers;
+  len := Length(Result);
+  if (len > 0) then
+  begin
+    i := 0;
+    while (i < Length(Result)) do
+    begin
+      if not(IsArrInStr(strings, Result[i].getName)) then
+        Result.remove(i)
+      else
+        Inc(i);
+    end;
+  end;
+end;
+
+function TPlayerApi.getPlayers(lvl: Integer): TPlayerArray; overload;
+begin
+  Result := Self.getPlayers([lvl]);
+end;
+
+function TPlayerApi.getPlayers(str: String): TPlayerArray; overload;
+begin
+  Result := Self.getPlayers([str]);
+end;
+
+function TPlayerApi.getPlayer(lvlArray: TIntegerArray): TPlayer;
+var
+  players: TPlayerArray;
+  len: Integer;
+begin
+  players := Self.getPlayers(lvlArray);
+  len := Length(players);
+  if (len > 0) then
+  begin
+    Result := players[0];
+    players.swap(0, len - 1);
+    SetLength(players, len - 1);
+  end;
+  players.free;
+end;
+
+function TPlayerApi.getPlayer(strings: TStringArray): TPlayer; overload;
+var
+  players: TPlayerArray;
+  len: Integer;
+begin
+  players := Self.getPlayers(strings);
+  len := Length(players);
+  if (len > 0) then
+  begin
+    Result := players[0];
+    players.swap(0, len - 1);
+    SetLength(players, len - 1);
+  end;
+  players.free;
+end;
+
+function TPlayerApi.getPlayer(lvl: Integer): TPlayer; overload;
+begin
+  Result := Self.getPlayer([lvl]);
+end;
+
+function TPlayerApi.getPlayer(str: String): TPlayer; overload;
+begin
+  Result := Self.getPlayer([str]);
+end;
+
+function TPlayerApi.findPlayers(lvlArray: TIntegerArray; var players: TPlayerArray): Boolean;
+begin
+  players.free;
+  players := Self.getPlayers(lvlArray);
+  Result := Length(players) > 0;
+end;
+
+function TPlayerApi.findPlayers(strings: TStringArray; var players: TPlayerArray): Boolean; overload;
+begin
+  players.free;
+  players := Self.getPlayers(strings);
+  Result := Length(players) > 0;
+end;
+
+function TPlayerApi.findPlayers(lvl: Integer; var players: TPlayerArray): Boolean; overload;
+begin
+  Result := Self.findPlayers([lvl], players);
+end;
+
+function TPlayerApi.findPlayers(str: String; var players: TPlayerArray): Boolean; overload;
+begin
+  Result := Self.findPlayers([str], players);
+end;
+
+function TPlayerApi.findPlayers(lvlArray: TIntegerArray): Boolean; overload;
+var
+  players: TPlayerArray;
+begin
+  Result := Self.findPlayers(lvlArray, players);
+  players.free;
+end;
+
+function TPlayerApi.findPlayers(strings: TStringArray): Boolean; overload;
+var
+  players: TPlayerArray;
+begin
+  Result := Self.findPlayers(strings, players);
+  players.free;
+end;
+
+function TPlayerApi.findPlayers(lvl: Integer): Boolean; overload;
+begin
+  Result := Self.findPlayers([lvl]);
+end;
+
+function TPlayerApi.findPlayers(str: String): Boolean; overload;
+begin
+  Result := Self.findPlayers([str]);
+end;
+
+function TPlayerApi.findPlayer(lvlArray: TIntegerArray; var player: TPlayer): Boolean;
+begin
+  player.free;
+  player := Self.getPlayer(lvlArray);
+  Result := not player.isNull;
+  if not Result then
+    player.free;
+end;
+
+function TPlayerApi.findPlayer(strings: TStringArray; var player: TPlayer): Boolean; overload;
+begin
+  player.free;
+  player := Self.getPlayer(strings);
+  Result := not player.isNull;
+  if not Result then
+    player.free;
+end;
+
+function TPlayerApi.findPlayer(lvl: Integer; var player: TPlayer): Boolean; overload;
+begin
+  Result := Self.findPlayer([lvl], Player);
+end;
+
+function TPlayerApi.findPlayer(str: String; var player: TPlayer): Boolean; overload;
+begin
+  Result := Self.findPlayer([str], Player);
+end;
+
+function TPlayerApi.findPlayer(lvlArray: TIntegerArray): Boolean; overload;
+var
+  player: TPlayer;
+begin
+  Result := Self.findPlayer(lvlArray, Player);
+  player.free;
+end;
+
+function TPlayerApi.findPlayer(strings: TStringArray): Boolean; overload;
+var
+  player: TPlayer;
+begin
+  Result := Self.findPlayer(strings, Player);
+  player.free;
+end;
+
+function TPlayerApi.findPlayer(lvl: Integer): Boolean; overload;
+begin
+  Result := Self.findPlayer([lvl]);
+end;
+
+function TPlayerApi.findPlayer(str: String): Boolean; overload;
+begin
+  Result := Self.findPlayer([str]);
+end;

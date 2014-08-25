@@ -1,7 +1,7 @@
-{
+(*
   OSR Reflection Library
   Maintained by: tls
-}
+*)
 
 //Global Constants
 const
@@ -15,10 +15,12 @@ const
 {$include_once data\globals.simba}
 {$include_once wrappers\rsobject.simba}
 {$include_once wrappers\client.simba}
+{$include_once wrappers\rsview.simba}
 
 //API Includes
 {$include_once api\widgets.simba}
 {$include_once api\npcs.simba}
+{$include_once api\players.simba}
 
 //Global Destructor
 procedure FreeOSRReflection;
@@ -41,5 +43,6 @@ procedure SetupOSRReflection(smartTarget: PtrUInt);
 begin
   writeln('Setting up OSR Reflection');
   reflectLib.create(smartTarget);
+  _setCurves;
   AddOnTerminate('FreeOSRReflection');
 end;

@@ -79,19 +79,44 @@ begin
   Result := reflectLib.getFieldString(Self.ref, hook_Character_getText);
 end;
 
-function TCharacter.getX: Integer;
+function TCharacter.getPixelX: Integer;
 begin
   Result := reflectLib.getFieldInt(Self.ref, hook_Character_getX);
 end;
 
-function TCharacter.getY: Integer;
+function TCharacter.getPixelY: Integer;
 begin
   Result := reflectLib.getFieldInt(Self.ref, hook_Character_getY);
 end;
 
+function TCharacter.getLocalX: Integer;
+begin
+  Result := Self.getPixelX shr _LOCAL_XY_SHIFT;
+end;
+
+function TCharacter.getLocalY: Integer;
+begin
+  Result := Self.getPixelY shr _LOCAL_XY_SHIFT;
+end;
+
+function TCharacter.getX: Integer;
+begin
+  Result := rsclient.getBaseX + Self.getLocalX;
+end;
+
+function TCharacter.getY: Integer;
+begin
+  Result := rsclient.getBaseY + Self.getLocalY;
+end;
+
+function TCharacter.getLocalTile: TPoint;
+begin
+  Result := Point(Self.getLocalX, Self.getLocalY);
+end;
+
 function TCharacter.getTile: TPoint;
 begin
-  Result := Point(Self.getX, self.getY);
+  Result := Point(Self.getX, Self.getY);
 end;
 
 function TCharacter.isInSequence: Boolean;
