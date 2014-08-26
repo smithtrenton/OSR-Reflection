@@ -41,17 +41,6 @@ begin
 end;
 
 function TRSClient.worldToScreen(x, y, z: Extended): TPoint;
-  function ashr(x: Integer; d: Byte): Integer;
-  var
-    Bit: Integer;
-    I: Integer;
-  begin
-    Bit := (1 shl 31) and x;
-    Result := x;
-
-    for I := 1 to d do
-      Result := (Result shr 1) or Bit;
-  end;
 var
   yaw, pitch, cosX, cosY, sinX, sinY, temp: Extended;
 begin
@@ -70,11 +59,11 @@ begin
   cosY := Self.getCosineTable(Floor(pitch));
   sinX := Self.getSineTable(Floor(yaw));
   sinY := Self.getSineTable(Floor(pitch));
-  temp := ashr(Round((cosX * x) + (y * sinX)), 16);
-  y := ashr(Round((y * cosX) - (x * sinX)), 16);
+  temp := Sar(Round((cosX * x) + (y * sinX)), 16);
+  y := Sar(Round((y * cosX) - (x * sinX)), 16);
   x := Round(temp);
-  temp := ashr(Round((z * cosY) - (y * sinY)), 16);
-  y := ashr(Round((z * sinY) - ((-cosY) * y)), 16);
+  temp := Sar(Round((z * cosY) - (y * sinY)), 16);
+  y := Sar(Round((z * sinY) - ((-cosY) * y)), 16);
   z := Round(temp);
   if (y < 50) then
   begin
@@ -85,17 +74,6 @@ begin
 end;
 
 function TRSClient.tileToMinimap(tile: TPoint): TPoint;
-  function ashr(x: Integer; d: Byte): Integer;
-  var
-    Bit: Integer;
-    I: Integer;
-  begin
-    Bit := (1 shl 31) and x;
-    Result := x;
-
-    for I := 1 to d do
-      Result := (Result shr 1) or Bit;
-  end;
 var
   x, y, scale, offset, angle, ssin, ccos: Integer;
   meTile: TPoint;
@@ -109,8 +87,7 @@ begin
   scale := Self.getMapScale + 256;
   ssin := Floor((Self.getSineTable(angle) * 256) / scale);
   ccos := Floor((Self.getCosineTable(angle) * 256) / scale);
-  Result.X := _MAP_X_OFFSET + ashr(x * ccos + y * ssin, 16);
-  Result.Y := ashr(y * ccos - x * ssin, 16);
-  Result.Y := _MAP_Y_OFFSET - ashr(y * ccos - x * ssin, 16);
+  Result.X := _MAP_X_OFFSET + Sar(x * ccos + y * ssin, 16);
+  Result.Y := _MAP_Y_OFFSET - Sar(y * ccos - x * ssin, 16);
 end;
 
