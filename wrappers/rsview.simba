@@ -6,6 +6,21 @@ RSView contains view-related conversion functions
 
 *)
 
+function TRSClient.getMinimapAngleRaw: Integer;
+begin
+  Result := Self.getMapOffset + Self.getMapAngle and $7FF;
+end;
+
+function TRSClient.getMinimapAngleDeg: Extended;
+begin
+  Result := (Self.getMinimapAngleRaw / 2048.0 * 360);
+end;
+
+function TRSClient.getMinimapAngleRad: Extended;
+begin
+  Result := Radians(getMinimapAngleDeg);
+end;
+
 function TRSClient.getTileHeight(tile: TPoint): Integer;
 var
   x, y, plane, ground: Integer;
@@ -26,30 +41,78 @@ begin
 end;
 
 function TRSClient.worldToScreen(x, y, z: Extended): TPoint;
+  function ashr(x: Integer; d: Byte): Integer;
+  var
+    Bit: Integer;
+    I: Integer;
+  begin
+    Bit := (1 shl 31) and x;
+    Result := x;
+
+    for I := 1 to d do
+      Result := (Result shr 1) or Bit;
+  end;
 var
   yaw, pitch, cosX, cosY, sinX, sinY, temp: Extended;
 begin
   Result := Point(-1, -1);
   if (not InRange(Round(x), 128, 13056)) or (not InRange(Round(y), 128, 13056)) then
+  begin
+    writeln('range');
     Exit;
-  z -= z;
-  x -= Self.getCameraX;
-  y -= Self.getCameraY;
-  z -= Self.getCameraZ;
+  end;
+  z := -z;
+  x := x - Self.getCameraX;
+  y := y - Self.getCameraY;
+  z := z - Self.getCameraZ;
   yaw := Self.getCameraYaw;
-  pitch := Self.getCameraPitch;
-  cosX := _COS_TABLE[Floor(yaw)];
-  cosY := _COS_TABLE[Floor(pitch)];
-  sinX := _SIN_TABLE[Floor(yaw)];
-  sinY := _SIN_TABLE[Floor(pitch)];
-  temp := (Round((cosX * x) + (y * sinX)) shr 16);
-  y := (Round((y * cosX) - (x * sinX)) shr 16);
+  pitch :=  Self.getCameraPitch;
+  cosX := Self.getCosineTable(Floor(yaw));
+  cosY := Self.getCosineTable(Floor(pitch));
+  sinX := Self.getSineTable(Floor(yaw));
+  sinY := Self.getSineTable(Floor(pitch));
+  temp := ashr(Round((cosX * x) + (y * sinX)), 16);
+  y := ashr(Round((y * cosX) - (x * sinX)), 16);
   x := Round(temp);
-  temp := (Round((z * cosY) - (y * sinY)) shr 16);
-  y := (Round((z * sinY) - ((-cosY) * y)) shr 16);
+  temp := ashr(Round((z * cosY) - (y * sinY)), 16);
+  y := ashr(Round((z * sinY) - ((-cosY) * y)), 16);
   z := Round(temp);
   if (y < 50) then
+  begin
+    writeln('z');
     Exit;
+  end;
   Result.x := Round((Floor(x) shl 9) / y) + 259;
   Result.y := Round((Floor(z) shl 9) / y) + 170;
 end;
+
+function TRSClient.tileToMinimap(tile: TPoint): TPoint;
+  function ashr(x: Integer; d: Byte): Integer;
+  var
+    Bit: Integer;
+    I: Integer;
+  begin
+    Bit := (1 shl 31) and x;
+    Result := x;
+
+    for I := 1 to d do
+      Result := (Result shr 1) or Bit;
+  end;
+var
+  x, y, scale, offset, angle, ssin, ccos: Integer;
+  meTile: TPoint;
+begin
+  meTile := Self.getPixelTile;
+  x := Floor(((tile.X - Self.getBaseX) * 4 + 2) - meTile.X / 32);
+  y := Floor(((tile.Y - Self.getBaseY) * 4 + 2) - meTile.Y / 32);
+  if (x*x + y*y > 6400) then
+    Exit(Point(-1, -1));
+  angle := Self.getMiniMapAngleRaw;
+  scale := Self.getMapScale + 256;
+  ssin := Floor((Self.getSineTable(angle) * 256) / scale);
+  ccos := Floor((Self.getCosineTable(angle) * 256) / scale);
+  Result.X := _MAP_X_OFFSET + ashr(x * ccos + y * ssin, 16);
+  Result.Y := ashr(y * ccos - x * ssin, 16);
+  Result.Y := _MAP_Y_OFFSET - ashr(y * ccos - x * ssin, 16);
+end;
+

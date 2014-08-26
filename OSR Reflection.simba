@@ -43,6 +43,5 @@ procedure SetupOSRReflection(smartTarget: PtrUInt);
 begin
   writeln('Setting up OSR Reflection');
   reflectLib.create(smartTarget);
-  _setCurves;
   AddOnTerminate('FreeOSRReflection');
 end;

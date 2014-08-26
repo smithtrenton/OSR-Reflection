@@ -42,6 +42,62 @@ begin
   Result := Point(Self.getBaseX, Self.getBaseY);
 end;
 
+function TRSClient.getPixelTile: TPoint;
+var
+  me: TRSObject;
+begin
+  me.create(0, hook_Client_getLocalPlayer, 'TRSClient.getPixelTile');
+  Result.x := reflectLib.getFieldInt(me.ref, hook_Character_getX);
+  Result.y := reflectLib.getFieldInt(me.ref, hook_Character_getY);
+  me.free;
+end;
+
+function TRSClient.getPixelX: Integer;
+var
+  p: TPoint;
+begin
+  p := Self.getPixelTile;
+  Result := p.X;
+end;
+
+function TRSClient.getPixelY: Integer;
+var
+  p: TPoint;
+begin
+  p := Self.getPixelTile;
+  Result := p.Y;
+end;
+
+function TRSClient.getLocalTile: TPoint;
+begin
+  Result := Self.getPixelTile;
+  Result.x := Result.x shr _LOCAL_XY_SHIFT;
+  Result.y := Result.y shr _LOCAL_XY_SHIFT;
+end;
+
+function TRSClient.getLocalX: Integer;
+var
+  p: TPoint;
+begin
+  p := Self.getLocalTile;
+  Result := p.X;
+end;
+
+function TRSClient.getLocalY: Integer;
+var
+  p: TPoint;
+begin
+  p := Self.getLocalTile;
+  Result := p.Y;
+end;
+
+function TRSClient.getTile: TPoint;
+begin
+  Result := getLocalTile;
+  Result.X += Self.getBaseX;
+  Result.y += Self.getBaseY;
+end;
+
 function TRSClient.getCameraPitch: Integer;
 begin
   Result := reflectLib.getFieldInt(0, hook_Client_getCameraPitch);
@@ -120,5 +176,15 @@ end;
 function TRSClient.isMenuOpen: Boolean;
 begin
   Result := reflectLib.getFieldBoolean(0, hook_Client_isMenuOpen);
+end;
+
+function TRSClient.getCosineTable(index: Integer): Integer;
+begin
+  Result := reflectLib.getFieldArrayInt(0, hook_Client_getCosineTable, index);
+end;
+
+function TRSClient.getSineTable(index: Integer): Integer;
+begin
+  Result := reflectLib.getFieldArrayInt(0, hook_Client_getSineTable, index);
 end;
 

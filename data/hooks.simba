@@ -97,8 +97,8 @@ const
     hook_Client_getLocalPlayers: THook = ['client.gk', 'getLocalPlayers', 0];
     hook_Client_getLoginState: THook = ['au.k', 'getLoginState', -255923441];
     hook_Client_getMapAngle: THook = ['client.ff', 'getMapAngle', -601227549];
-    hook_Client_getMapOffset: THook = ['client.di', 'getMapOffset', 1940853797];
-    hook_Client_getMapScale: THook = ['client.dv', 'getMapScale', 636422093];
+    hook_Client_getMapOffset: THook = ['client.dv', 'getMapOffset', 636422093];
+    hook_Client_getMapScale: THook = ['client.di', 'getMapScale',1940853797];
     hook_Client_getMenuActions: THook = ['client.id', 'getMenuActions', 0];
     hook_Client_getMenuCount: THook = ['client.iq', 'getMenuCount', 273194065];
     hook_Client_getMenuHeight: THook = ['r.ii', 'getMenuHeight', -1097506335];
@@ -128,6 +128,8 @@ const
     hook_Client_getWidgetSettings: THook = ['ey.h', 'getWidgetSettings', 0];
     hook_Client_getWidgetVarps: THook = ['ey.h', 'getWidgetVarps', 0];
     hook_Client_isMenuOpen: THook = ['client.hd', 'isMenuOpen', 0];
+    hook_Client_getSineTable: THook = ['ct.aj', 'getSineTable', 0];
+    hook_Client_getCosineTable: THook = ['ct.af', 'getCosineTable', 0];
 
   hook_CollisionMap: THook = ['gm', 'CollisionMap', 0];
     hook_CollisionMap_getFlags: THook = ['ag', 'getFlags', 0];
