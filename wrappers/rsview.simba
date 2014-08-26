@@ -58,7 +58,6 @@ begin
   Result := Point(-1, -1);
   if (not InRange(Round(x), 128, 13056)) or (not InRange(Round(y), 128, 13056)) then
   begin
-    writeln('range');
     Exit;
   end;
   z := -z;
@@ -79,7 +78,6 @@ begin
   z := Round(temp);
   if (y < 50) then
   begin
-    writeln('z');
     Exit;
   end;
   Result.x := Round((Floor(x) shl 9) / y) + 259;
@@ -102,7 +100,7 @@ var
   x, y, scale, offset, angle, ssin, ccos: Integer;
   meTile: TPoint;
 begin
-  meTile := Self.getPixelTile;
+  meTile := Self.getRawTile;
   x := Floor(((tile.X - Self.getBaseX) * 4 + 2) - meTile.X / 32);
   y := Floor(((tile.Y - Self.getBaseY) * 4 + 2) - meTile.Y / 32);
   if (x*x + y*y > 6400) then

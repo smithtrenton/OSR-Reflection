@@ -42,35 +42,35 @@ begin
   Result := Point(Self.getBaseX, Self.getBaseY);
 end;
 
-function TRSClient.getPixelTile: TPoint;
+function TRSClient.getRawTile: TPoint;
 var
   me: TRSObject;
 begin
-  me.create(0, hook_Client_getLocalPlayer, 'TRSClient.getPixelTile');
+  me.create(0, hook_Client_getLocalPlayer, 'TRSClient.getRawTile');
   Result.x := reflectLib.getFieldInt(me.ref, hook_Character_getX);
   Result.y := reflectLib.getFieldInt(me.ref, hook_Character_getY);
   me.free;
 end;
 
-function TRSClient.getPixelX: Integer;
+function TRSClient.getRawX: Integer;
 var
   p: TPoint;
 begin
-  p := Self.getPixelTile;
+  p := Self.getRawTile;
   Result := p.X;
 end;
 
-function TRSClient.getPixelY: Integer;
+function TRSClient.getRawY: Integer;
 var
   p: TPoint;
 begin
-  p := Self.getPixelTile;
+  p := Self.getRawTile;
   Result := p.Y;
 end;
 
 function TRSClient.getLocalTile: TPoint;
 begin
-  Result := Self.getPixelTile;
+  Result := Self.getRawTile;
   Result.x := Result.x shr _LOCAL_XY_SHIFT;
   Result.y := Result.y shr _LOCAL_XY_SHIFT;
 end;

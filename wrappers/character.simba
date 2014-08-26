@@ -79,24 +79,24 @@ begin
   Result := reflectLib.getFieldString(Self.ref, hook_Character_getText);
 end;
 
-function TCharacter.getPixelX: Integer;
+function TCharacter.getRawX: Integer;
 begin
   Result := reflectLib.getFieldInt(Self.ref, hook_Character_getX);
 end;
 
-function TCharacter.getPixelY: Integer;
+function TCharacter.getRawY: Integer;
 begin
   Result := reflectLib.getFieldInt(Self.ref, hook_Character_getY);
 end;
 
 function TCharacter.getLocalX: Integer;
 begin
-  Result := Self.getPixelX shr _LOCAL_XY_SHIFT;
+  Result := Self.getRawX shr _LOCAL_XY_SHIFT;
 end;
 
 function TCharacter.getLocalY: Integer;
 begin
-  Result := Self.getPixelY shr _LOCAL_XY_SHIFT;
+  Result := Self.getRawY shr _LOCAL_XY_SHIFT;
 end;
 
 function TCharacter.getX: Integer;
@@ -107,6 +107,11 @@ end;
 function TCharacter.getY: Integer;
 begin
   Result := rsclient.getBaseY + Self.getLocalY;
+end;
+
+function TCharacter.getRawTile: TPoint;
+begin
+  Result := Point(Self.getRawX, Self.getRawY);
 end;
 
 function TCharacter.getLocalTile: TPoint;
