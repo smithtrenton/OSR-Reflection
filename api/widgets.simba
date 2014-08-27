@@ -37,44 +37,280 @@ begin
   SetLength(Result, c);
 end;
 
-function TWidgetApi.getWidget(groupIndex, widgetIndex: Integer): TWidget;
-begin
-  if Self.isValidWidget(groupIndex) then
-    Result.create(0, hook_Client_getWidgets,
-      groupIndex, widgetIndex, 'getWidget');
-end;
-
-function TWidgetApi.getWidget(groupIndex, parentIndex, childIndex: Integer): TWidget; overload;
+function TWidgetApi.getWidgetIndex(groupIndex, parentIndex, childIndex: Integer): TWidget;
 var
   parent: TWidget;
 begin
   if Self.isValidWidget(groupIndex) then
   begin
-    parent.create(0, hook_Client_getWidgets,
-      groupIndex, parentIndex, 'getWidget2');
-    Result := parent.getChild(childIndex);
-    parent.free;
+    parent.create(0, hook_Client_getWidgets, groupIndex, parentIndex, 'TWidgetApi.getWidgetIndex');
+    if (childIndex > -1) then
+    begin
+      Result := parent.getChild(childIndex);
+      parent.free;
+    end else
+      Result := parent;
   end;
+end;
+
+function TWidgetApi.getWidgetIndex(groupIndex, widgetIndex: Integer): TWidget; overload;
+begin
+  Result := TWidgetApi.getWidgetIndex(groupIndex, widgetIndex, -1);
 end;
 
 function TWidgetApi.getWidgetGroup(index: Integer): TWidgetArray;
 var
-  c: Integer;
+  c, len, i, curI: Integer;
   temp: TWidget;
+  children: TWidgetArray;
 begin
   c := 0;
+  curI := 0;
   if Self.isValidWidget(index) then
   begin
-    temp := widgetAPI.getWidget(index, c);
+    temp := Self.getWidgetIndex(index, curI);
     while (not temp.isNull) do
     begin
       SetLength(Result, c+1);
       Result[c] := temp;
+      inc(curI);
       inc(c);
-      temp := widgetAPI.getWidget(index, c);
+      children := temp.getChildren;
+      len := Length(children);
+      if (len > 0) then
+      begin
+        for i := 0 to (len - 1) do
+        begin
+          SetLength(Result, c+1);
+          Result[c] := children[i];
+          inc(c);
+        end;
+      end;
+      temp := Self.getWidgetIndex(index, curI);
     end;
     if temp.isNull then
       temp.free;
   end;
   SetLength(Result, c);
 end;
+
+function TWidgetApi.getWidgets: TWidgetArray;
+var
+  i, h, len, len2, c: Integer;
+  groups: TIntegerArray;
+  widgets: TWidgetArray;
+begin
+  groups := Self.getValidWidgetGroups;
+  len := Length(groups);
+  for i := 0 to (len - 1) do
+  begin
+    widgets := Self.getWidgetGroup(groups[i]);
+    len2 := Length(widgets);
+      if (len2 > 0) then
+      begin
+        for h := 0 to (len2 - 1) do
+        begin
+          if widgets[h].isNull then
+            widgets[h].free;
+          SetLength(Result, c+1);
+          Result[c] := widgets[h];
+          inc(c);
+        end;
+      end;
+  end;
+end;
+
+function TWidgetApi.getWidgets(idArray: TIntegerArray): TWidgetArray; overload;
+var
+  i, len: Integer;
+begin
+  Result := Self.getWidgets;
+  len := Length(Result);
+  if (len > 0) then
+  begin
+    i := 0;
+    while (i < Length(Result)) do
+    begin
+      if not(InIntArray(idArray, Result[i].getItemID)) then
+        Result.remove(i)
+      else
+        Inc(i);
+    end;
+  end;
+end;
+
+function TWidgetApi.getWidgets(strings: TStringArray): TWidgetArray; overload;
+var
+  i, len: Integer;
+begin
+  Result := Self.getWidgets;
+  len := Length(Result);
+  if (len > 0) then
+  begin
+    i := 0;
+    while (i < Length(Result)) do
+    begin
+      if not(IsArrInStr(strings, Result[i].getText)) then
+        Result.remove(i)
+      else
+        Inc(i);
+    end;
+  end;
+end;
+
+function TWidgetApi.getWidgets(id: Integer): TWidgetArray; overload;
+begin
+  Result := Self.getWidgets([id]);
+end;
+
+function TWidgetApi.getWidgets(str: String): TWidgetArray; overload;
+begin
+  Result := Self.getWidgets([str]);
+end;
+
+function TWidgetApi.getWidget(idArray: TIntegerArray): TWidget;
+var
+  npcs: TWidgetArray;
+  len: Integer;
+begin
+  npcs := Self.getWidgets(idArray);
+  len := Length(npcs);
+  if (len > 0) then
+  begin
+    Result := npcs[0];
+    npcs.swap(0, len - 1);
+    SetLength(npcs, len - 1);
+  end;
+  npcs.free;
+end;
+
+function TWidgetApi.getWidget(strings: TStringArray): TWidget; overload;
+var
+  npcs: TWidgetArray;
+  len: Integer;
+begin
+  npcs := Self.getWidgets(strings);
+  len := Length(npcs);
+  if (len > 0) then
+  begin
+    Result := npcs[0];
+    npcs.swap(0, len - 1);
+    SetLength(npcs, len - 1);
+  end;
+  npcs.free;
+end;
+
+function TWidgetApi.getWidget(id: Integer): TWidget; overload;
+begin
+  Result := Self.getWidget([id]);
+end;
+
+function TWidgetApi.getWidget(str: String): TWidget; overload;
+begin
+  Result := Self.getWidget([str]);
+end;
+
+function TWidgetApi.findWidgets(idArray: TIntegerArray; var npcs: TWidgetArray): Boolean;
+begin
+  npcs.free;
+  npcs := Self.getWidgets(idArray);
+  Result := Length(npcs) > 0;
+end;
+
+function TWidgetApi.findWidgets(strings: TStringArray; var npcs: TWidgetArray): Boolean; overload;
+begin
+  npcs.free;
+  npcs := Self.getWidgets(strings);
+  Result := Length(npcs) > 0;
+end;
+
+function TWidgetApi.findWidgets(id: Integer; var npcs: TWidgetArray): Boolean; overload;
+begin
+  Result := Self.findWidgets([id], npcs);
+end;
+
+function TWidgetApi.findWidgets(str: String; var npcs: TWidgetArray): Boolean; overload;
+begin
+  Result := Self.findWidgets([str], npcs);
+end;
+
+function TWidgetApi.findWidgets(idArray: TIntegerArray): Boolean; overload;
+var
+  npcs: TWidgetArray;
+begin
+  Result := Self.findWidgets(idArray, npcs);
+  npcs.free;
+end;
+
+function TWidgetApi.findWidgets(strings: TStringArray): Boolean; overload;
+var
+  npcs: TWidgetArray;
+begin
+  Result := Self.findWidgets(strings, npcs);
+  npcs.free;
+end;
+
+function TWidgetApi.findWidgets(id: Integer): Boolean; overload;
+begin
+  Result := Self.findWidgets([id]);
+end;
+
+function TWidgetApi.findWidgets(str: String): Boolean; overload;
+begin
+  Result := Self.findWidgets([str]);
+end;
+
+function TWidgetApi.findWidget(idArray: TIntegerArray; var widget: TWidget): Boolean;
+begin
+  widget.free;
+  widget := Self.getWidget(idArray);
+  Result := not widget.isNull;
+  if not Result then
+    widget.free;
+end;
+
+function TWidgetApi.findWidget(strings: TStringArray; var widget: TWidget): Boolean; overload;
+begin
+  widget.free;
+  widget := Self.getWidget(strings);
+  Result := not widget.isNull;
+  if not Result then
+    widget.free;
+end;
+
+function TWidgetApi.findWidget(id: Integer; var widget: TWidget): Boolean; overload;
+begin
+  Result := Self.findWidget([id], widget);
+end;
+
+function TWidgetApi.findWidget(str: String; var widget: TWidget): Boolean; overload;
+begin
+  Result := Self.findWidget([str], widget);
+end;
+
+function TWidgetApi.findWidget(idArray: TIntegerArray): Boolean; overload;
+var
+  widget: TWidget;
+begin
+  Result := Self.findWidget(idArray, widget);
+  widget.free;
+end;
+
+function TWidgetApi.findWidget(strings: TStringArray): Boolean; overload;
+var
+  widget: TWidget;
+begin
+  Result := Self.findWidget(strings, widget);
+  widget.free;
+end;
+
+function TWidgetApi.findWidget(id: Integer): Boolean; overload;
+begin
+  Result := Self.findWidget([id]);
+end;
+
+function TWidgetApi.findWidget(str: String): Boolean; overload;
+begin
+  Result := Self.findWidget([str]);
+end;
+

@@ -22,9 +22,41 @@ begin
   setLength(Self, 0);
 end;
 
-function TWidget.toStr: String; forward;
+procedure TWidgetArray.swap(index1, index2: Integer);
+var
+  temp: TWidget;
+  len: Integer;
+begin
+  len := Length(Self);
+  if (index1 > len) or (index1 < 0) then
+  begin
+    writeln('** TWidgetArray/', GetGlobalName(@Self),
+      ': Index = "', index1, '" out of bounds **');
+    Exit;
+  end if (index2 > len) or (index2 < 0) then
+  begin
+    writeln('** TWidgetArray/', GetGlobalName(@Self),
+      ': Index = "', index2, '" out of bounds **');
+    Exit;
+  end;
+  temp := Self[index1];
+  Self[index1] := Self[index2];
+  Self[index2] := temp;
+end;
 
-function TWidgetArray.toStr: String;
+procedure TWidgetArray.remove(index: Integer);
+var
+  len: Integer;
+begin
+  len := Length(Self) - 1;
+  Self.swap(index, len);
+  Self[len].free;
+  SetLength(Self, len);
+end;
+
+function TWidget.toString: String; forward;
+
+function TWidgetArray.toString: String;
 var
   i, len: Integer;
 begin
@@ -34,15 +66,12 @@ begin
   begin
     if i > 0 then
       Result := Result + ', ';
-    Result := Result + Self[i].toStr;
+    Result := Result + Self[i].toString;
   end;
   Result := Result + '];';
 end;
 
-function TWidget.createFromID(id: Integer): TWidget;
-begin
-  Self.create(0, hook_Client_getWidgets, id shr 16, id and $FFFF, 'TWidget.create');
-end;
+procedure TWidget.create(id, index: Integer); overload; forward;
 
 function TWidget.getBoundsIndex: Integer;
 begin
@@ -147,6 +176,28 @@ begin
   Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getIndex);
 end;
 
+function TWidget.getIndices: TIntegerArray;
+var
+  index, id: Integer;
+begin
+  id := Self.getID;
+  index := self.getIndex;
+  if (index > -1) then
+    Result := [sar(id, 16), id and $FFFF, index]
+  else
+    Result := [sar(id, 16), id and $FFFF];
+end;
+
+function TWidget.getIndicesString: String;
+var
+  arr: TIntegerArray;
+begin
+  arr := Self.getIndices;
+  if (Length(arr) > 2) then
+    Exit(Format('%d, %d, %d', [arr[0], arr[1], arr[2]]));
+  Exit(Format('%d, %d', [arr[0], arr[1]]));
+end;
+
 function TWidget.getItemID: Integer;
 begin
   Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getItemID);
@@ -188,33 +239,37 @@ begin
     and (rsclient.getGameCycle < (Self.getLoopCycleStatus + 20));
 end;
 
-function TWidget.getChildren: TWidgetArray;
-var
-  len, c, i: Integer;
-  temp: TWidget;
+function TWidget.getChildCount: Integer;
 begin
-  len := reflectLib.getFieldArraySize(Self.ref, hook_Widget_getChildren);
-  c:= 0;
-  SetLength(Result, len);
-
-  for i := 0 to (len - 1) do
-  begin
-    temp.create(Self.ref, hook_Widget_getChildren, i, 'TWidget.getChildren[' + toString(i) + ']');
-    if temp.isNull then
-    begin
-      temp.free;
-      continue;
-    end;
-    Result[c] := temp;
-    inc(c);
-  end;
-
-  SetLength(Result, c);
+  Result := reflectLib.getFieldArraySize(Self.ref, hook_Widget_getChildren);
 end;
 
 function TWidget.getChild(index: Integer): TWidget;
 begin
   Result.create(Self.ref, hook_Widget_getChildren, index, 'TWidget.getChild');
+  if Result.isNull then
+    Result.free;
+end;
+
+function TWidget.getChildren: TWidgetArray;
+var
+  len, c, i: Integer;
+  temp: TWidget;
+begin
+  len := Self.getChildCount;
+  c:= 0;
+  SetLength(Result, len);
+
+  for i := 0 to (len - 1) do
+  begin
+    temp := Self.getChild(i);
+    if temp.isNull then
+      continue;
+    Result[c] := temp;
+    inc(c);
+  end;
+
+  SetLength(Result, c);
 end;
 
 function TWidget.getRoot: TWidget;
@@ -233,7 +288,7 @@ begin
   if (id > 0) then
     Exit(id);
 
-  id := (Self.getID shr 16);
+  id := sar(Self.getID, 16);
   try
     widgetHashTable.create(0, hook_client_getWidgetNodeTable, 'TWidget.getParentID');
     widgetNodes := widgetHashTable.getNodes;
@@ -273,9 +328,9 @@ var
 begin
   pid := Self.getParentID;
   if (pid > 0) then
-    Result.createFromID(Self.getParentID)
-      else
-        Result.create(0);
+  begin
+    Result.create(pid, -1);
+  end;
 end;
 
 function TWidget.isHidden: Boolean;
@@ -298,19 +353,17 @@ var
 begin
   Result := Point(0, 0);
   parent := Self.getParent;
-  try
-    if parent.isNull then
-    begin
-      Exit(Point(Self.getBoundsX, Self.getBoundsY));
-    end else
-    begin
-      Result := parent.getPosition;
-      Result := Point(Result.x - parent.getScrollX, Result.y - parent.getScrollY);
-    end;
-    Result := Point(Result.x + Self.getRelativeX, Result.y + Self.getRelativeY);
-  finally
+  if parent.isNull then
+  begin
     parent.free;
+    Exit(Point(Self.getBoundsX, Self.getBoundsY));
+  end else
+  begin
+    Result := parent.getPosition;
+    Result := Point(Result.x - parent.getScrollX, Result.y - parent.getScrollY);
   end;
+  Result := Point(Result.x + Self.getRelativeX, Result.y + Self.getRelativeY);
+  parent.free;
 end;
 
 function TWidget.getX: Integer;
@@ -331,10 +384,29 @@ begin
   Result := PointToBox(p, Point(p.x + Self.getWidth, p.y + Self.getHeight));
 end;
 
-function TWidget.toStr: String;
+procedure TWidget.create(id, index: Integer);
+var
+  parent: TWidget;
 begin
-  Result := 'Widget[' + toString(Self.getID shr 16) + ', '
-    + toString(Self.getID and $ffff) + ']' ;
+  if (index > 0) then
+  begin
+    parent.create(id, -1);
+    if parent.isNull then
+    begin
+      parent.free;
+      exit;
+    end;
+    Self := parent.getChild(index);
+    parent.free;
+  end else
+    Self.create(0, hook_Client_getWidgets, sar(id, 16), id and $FFFF, 'TWidget.create');
+  if Self.isNull then
+    Self.free;
+end;
+
+function TWidget.toString: String;
+begin
+  Result := 'Widget[' + Self.getIndicesString + ']: Text = "' + Self.getText + '"';
 end;
 
 

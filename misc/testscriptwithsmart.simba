@@ -4,36 +4,12 @@ program new;
 
 var
   Smart: TSmartClient;
-  me: TLocalPlayer;
-  p,tile,meTile: TPoint;
-  i: Integer;
-  npcs: TNPCArray;
 
 begin
   SMARTSettings.ShowConsole := False;
   SMARTSettings.ForceNew := False;
   Smart.Init;
   SetupOSRReflection(Smart.Target);
-
-  me.create;
-  tile := me.getTile;
-  p := rsclient.tileToMinimap(tile);
-  Smart.Image.drawCircle(p, 1, True, clGreen);
-  me.free;
-
-  npcs := npcAPI.getNPCs('Banker');
-  npcs.debug;
-  for i := 0 to High(npcs) do
-  begin
-    p := rsclient.tileToMiniMap(npcs[i].getTile);
-    if PointInBox(p, IntToBox(0,0,Smart.Width-1,Smart.Height-1)) then
-      Smart.Image.drawCircle(p, 2, True, clPink);
-    p := rsclient.worldToScreen(npcs[i].getRawX, npcs[i].getRawY, rsclient.getTileHeight(npcs[i].getTile));
-    writeln(p);
-    if PointInBox(p, IntToBox(0,0,Smart.Width-1,Smart.Height-1)) then
-      Smart.Image.drawCircle(p, 3, True, clGreen);
-  end;
-  npcs.free;
 
   Smart.Free;
 end.

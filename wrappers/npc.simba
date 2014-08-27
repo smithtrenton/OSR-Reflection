@@ -149,17 +149,16 @@ begin
   SetLength(Self, len);
 end;
 
-procedure TNPCArray.debug;
+function TNPCArray.toString: String;
 var
   i, len: Integer;
   str: String;
 begin
   len := Length(Self);
-  str := GetGlobalName(@Self) + '(len = ' + toString(len) + ') :';
+  Result := GetGlobalName(@Self) + '(len = ' + IntToStr(len) + ') :';
   for i := 0 to len - 1 do
   begin
-    str := str + #13#10#9 + Self[i].toString;
+    Result := Result + #13#10#9 + Self[i].toString;
   end;
-  writeln(str);
 end;
 
