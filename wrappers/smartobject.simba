@@ -12,17 +12,17 @@ ArrayList)
 type
   TSmartObject = record
     ref: PtrUInt;
-    name: String;
     hook: THook;
+    name: String;
   end;
 
   TSmartObjectArray = array of TSmartObject;
 
-procedure TSmartObject.create(_ref: PtrUInt; _name: String; _hook: THook);
+procedure TSmartObject.create(_ref: PtrUInt; _hook: THook; _name: String);
 begin
   Self.ref := _ref;
-  Self.name := _name;
   Self.hook := _hook;
+  Self.name := _name;
 end;
 
 function TSmartObject.isNull: Boolean;
@@ -30,13 +30,13 @@ begin
   Result := (Self.ref = 0) and Self.hook.isNull;
 end;
 
-function TSmartObject.toStr: String;
+function TSmartObject.toString: String;
 begin
   if Self.name = '' then
     Result := 'SmartObject: '
   else
     Result := Self.name + ': ';
-  Result := Result + toString(Self.ref)+ '    ' + Self.hook.toStr;
+  Result := Result + IntToStr(Self.ref)+ '    ' + Self.hook.toString;
 end;
 
 procedure TSmartObjectArray.setSize(c: Integer);
@@ -104,64 +104,22 @@ begin
   Exit;
 end;
 
-function TSmartObjectArray.setAt(index: Integer; so: TSmartObject): Boolean;
-begin
-  if (index < Self.getSize) and (index > -1) then
-  begin
-    self[index] := so;
-    Exit(True);
-  end else
-  begin
-    writeln('** TSmartObjectArray/', Between('"', '"', toString(@self)),
-      ': Index = "', index, '" out of bounds **');
-    Exit(False);
-  end;
-end;
-
 procedure TSmartObjectArray.add(so: TSmartObject);
 begin
-  Self.incSize;
-  Self.setAt(Self.getSize - 1, so);
+  Insert(so, Self);
 end;
 
 procedure TSmartObjectArray.add(ref: PtrUInt; hook: THook; name: String); overload;
 var
   so: TSmartObject;
 begin
-  so.create(ref, name, hook);
+  so.create(ref, hook, name);
   Self.add(so);
-end;
-
-procedure TSmartObjectArray.swap(index1, index2: Integer);
-var
-  temp: TSmartObject;
-  len: Integer;
-begin
-  if (index1 = index2) then
-    Exit;
-
-  len := Self.getSize;
-  if (index1 > len) or (index1 < 0) then
-  begin
-    writeln('** TSmartObjectArray/', Between('"', '"', toString(@self)),
-      ': Index = "', index1, '" out of bounds **');
-    Exit;
-  end if (index2 > len) or (index2 < 0) then
-  begin
-    writeln('** TSmartObjectArray/', Between('"', '"', toString(@self)),
-      ': Index = "', index2, '" out of bounds **');
-    Exit;
-  end;
-
-  temp := self[index1];
-  self[index1] := self[index2];
-  self[index2] := temp;
 end;
 
 procedure TSmartObjectArray.remove(index: Integer);
 begin
-  Self.swap(index, Self.getSize-1);
-  Self.decSize;
+  Delete(Self, index, 1);
 end;
 
 procedure TSmartObjectArray.removeName(_name: String);
@@ -190,16 +148,16 @@ begin
   Self.setSize(0);
 end;
 
-function TSmartObjectArray.toStr: String;
+function TSmartObjectArray.toString: String;
 var
   i, len: Integer;
 begin
   len := Self.getSize;
-  Result := Between('"', '"', toString(@self));
+  Result := GetGlobalName(@Self);
   if (len < 1) then
     Exit(Result + ': TSmartObjectsArray is empty');
   for i := 0 to len - 1 do
   begin
-    Result := Result + #13#10 + '[' + toString(i) + ']: ' + self[i].toStr;
+    Result := Result + #13#10 + '[' + IntToStr(i) + ']: ' + self[i].toString;
   end;
 end;

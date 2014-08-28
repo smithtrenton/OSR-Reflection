@@ -11,5 +11,7 @@ begin
   Smart.Init;
   SetupOSRReflection(Smart.Target);
 
+  writeln(TNpcApi.getNpcs.toString);
+
   Smart.Free;
 end.

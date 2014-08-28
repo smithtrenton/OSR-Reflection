@@ -64,12 +64,22 @@ begin
   Result := reflectLib.getFieldBooleanArray(Self.ref, hook_Character_getQueueTraversed);
 end;
 
-function TCharacter.getQueueX: TIntegerArray;
+function TCharacter.getQueueX(index: Integer): Integer;
+begin
+  Result := reflectLib.getFieldArrayint(Self.ref, hook_Character_getQueueX, index);
+end;
+
+function TCharacter.getQueueY(index: Integer): Integer;
+begin
+  Result := reflectLib.getFieldArrayint(Self.ref, hook_Character_getQueueY, index);
+end;
+
+function TCharacter.getQueueX: TIntegerArray; overload;
 begin
   Result := reflectLib.getFieldIntArray(Self.ref, hook_Character_getQueueX);
 end;
 
-function TCharacter.getQueueY: TIntegerArray;
+function TCharacter.getQueueY: TIntegerArray; overload;
 begin
   Result := reflectLib.getFieldIntArray(Self.ref, hook_Character_getQueueY);
 end;

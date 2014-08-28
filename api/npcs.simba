@@ -15,243 +15,90 @@ var
 
 function TNpcApi.getValidNPCIndices: TIntegerArray;
 var
-  i, c, len: Integer;
+  i, len, index: Integer;
 begin
   len := reflectLib.getFieldArraySize(0, hook_Client_getNPCIndices);
-  SetLength(Result, len);
-  c := 0;
-  if (len > 0) then
+  for i := 0 to len - 1 do
   begin
-    i := reflectLib.getFieldArrayInt(0, hook_Client_getNPCIndices, c);
-    while (i > 0) do
-    begin
-      Result[c] := i;
-      Inc(c);
-      i := reflectLib.getFieldArrayInt(0, hook_Client_getNPCIndices, c);
-    end;
+    index := reflectLib.getFieldArrayInt(0, hook_Client_getNPCIndices, i);
+    if (index < 1) then Break;
+    Insert(index, Result);
   end;
-  SetLength(Result, c);
   ClearSameIntegers(Result);
 end;
 
-function TNpcApi.getNPCs: TNPCArray;
-
+function TNpcApi.getNPCs(filter: function(n: TNPC): Boolean): TNPCArray;
 var
   indices: TIntegerArray;
-  len, i, c: Integer;
+  len, i: Integer;
   npc: TNPC;
 begin
   indices := Self.getValidNPCIndices;
   len := Length(indices);
-  SetLength(Result, len);
-  c := 0;
-  if (len > 0) then
+  for i := 0 to (len - 1) do
   begin
-    for i := 0 to (len - 1) do
+    npc.create(0, hook_Client_getLocalNPCs, indices[i], 'TNpcApi.getNPCs');
+    if (npc.isNull) or not filter(npc) then
     begin
-      npc.create(0, hook_Client_getLocalNPCs, indices[i], 'TNpcApi.getNPCs');
-      if (npc.isNull) then
-      begin
-        npc.free;
-        continue;
-      end;
-      Result[c] := npc;
-      Inc(c);
+      npc.free;
+      continue;
     end;
-  end;
-  SetLength(Result, c);
-end;
-
-function TNpcApi.getNpcs(idArray: TIntegerArray): TNPCArray; overload;
-var
-  i, len: Integer;
-begin
-  Result := Self.getNPCs;
-  len := Length(Result);
-  if (len > 0) then
-  begin
-    i := 0;
-    while (i < Length(Result)) do
-    begin
-      if not(InIntArray(idArray, Result[i].getID)) then
-        Result.remove(i)
-      else
-        Inc(i);
-    end;
+    Insert(npc, Result);
   end;
 end;
 
-function TNpcApi.getNpcs(strings: TStringArray): TNPCArray; overload;
-var
-  i, len: Integer;
-begin
-  Result := Self.getNPCs;
-  len := Length(Result);
-  if (len > 0) then
+function TNpcApi.getNPCs: TNPCArray; overload;
+  function filter(n: TNPC): Boolean;
   begin
-    i := 0;
-    while (i < Length(Result)) do
-    begin
-      if not(IsArrInStr(strings, Result[i].getName)) then
-        Result.remove(i)
-      else
-        Inc(i);
-    end;
+    Result := true;
   end;
-end;
-
-function TNpcApi.getNpcs(id: Integer): TNPCArray; overload;
 begin
-  Result := Self.getNpcs([id]);
+  Result := Self.getNPCs(@filter);
 end;
 
-function TNpcApi.getNpcs(str: String): TNPCArray; overload;
-begin
-  Result := Self.getNpcs([str]);
-end;
-
-function TNpcApi.getNpc(idArray: TIntegerArray): TNPC;
+function TNpcApi.getNpc(filter: function(n: TNPC): Boolean): TNPC;
 var
   npcs: TNPCArray;
   len: Integer;
 begin
-  npcs := Self.getNpcs(idArray);
+  npcs := Self.getNpcs(@filter);
   len := Length(npcs);
   if (len > 0) then
   begin
     Result := npcs[0];
-    npcs.swap(0, len - 1);
-    SetLength(npcs, len - 1);
+    Delete(npcs, 0, 1);
   end;
   npcs.free;
 end;
 
-function TNpcApi.getNpc(strings: TStringArray): TNPC; overload;
-var
-  npcs: TNPCArray;
-  len: Integer;
-begin
-  npcs := Self.getNpcs(strings);
-  len := Length(npcs);
-  if (len > 0) then
-  begin
-    Result := npcs[0];
-    npcs.swap(0, len - 1);
-    SetLength(npcs, len - 1);
-  end;
-  npcs.free;
-end;
-
-function TNpcApi.getNpc(id: Integer): TNPC; overload;
-begin
-  Result := Self.getNpc([id]);
-end;
-
-function TNpcApi.getNpc(str: String): TNPC; overload;
-begin
-  Result := Self.getNpc([str]);
-end;
-
-function TNpcApi.findNpcs(idArray: TIntegerArray; var npcs: TNPCArray): Boolean;
+function TNpcApi.findNpcs(filter: function(n: TNPC): Boolean; var npcs: TNPCArray): Boolean;
 begin
   npcs.free;
-  npcs := Self.getNpcs(idArray);
+  npcs := Self.getNpcs(@filter);
   Result := Length(npcs) > 0;
 end;
 
-function TNpcApi.findNpcs(strings: TStringArray; var npcs: TNPCArray): Boolean; overload;
-begin
-  npcs.free;
-  npcs := Self.getNpcs(strings);
-  Result := Length(npcs) > 0;
-end;
-
-function TNpcApi.findNpcs(id: Integer; var npcs: TNPCArray): Boolean; overload;
-begin
-  Result := Self.findNpcs([id], npcs);
-end;
-
-function TNpcApi.findNpcs(str: String; var npcs: TNPCArray): Boolean; overload;
-begin
-  Result := Self.findNpcs([str], npcs);
-end;
-
-function TNpcApi.findNpcs(idArray: TIntegerArray): Boolean; overload;
+function TNpcApi.findNpcs(filter: function(n: TNPC): Boolean): Boolean; overload;
 var
   npcs: TNPCArray;
 begin
-  Result := Self.findNpcs(idArray, npcs);
+  Result := Self.findNpcs(@filter, npcs);
   npcs.free;
 end;
 
-function TNpcApi.findNpcs(strings: TStringArray): Boolean; overload;
-var
-  npcs: TNPCArray;
-begin
-  Result := Self.findNpcs(strings, npcs);
-  npcs.free;
-end;
-
-function TNpcApi.findNpcs(id: Integer): Boolean; overload;
-begin
-  Result := Self.findNpcs([id]);
-end;
-
-function TNpcApi.findNpcs(str: String): Boolean; overload;
-begin
-  Result := Self.findNpcs([str]);
-end;
-
-function TNpcApi.findNpc(idArray: TIntegerArray; var npc: TNPC): Boolean;
+function TNpcApi.findNpc(filter: function(n: TNPC): Boolean; var npc: TNPC): Boolean;
 begin
   npc.free;
-  npc := Self.getNpc(idArray);
+  npc := Self.getNpc(@filter);
   Result := not npc.isNull;
   if not Result then
     npc.free;
 end;
 
-function TNpcApi.findNpc(strings: TStringArray; var npc: TNPC): Boolean; overload;
-begin
-  npc.free;
-  npc := Self.getNpc(strings);
-  Result := not npc.isNull;
-  if not Result then
-    npc.free;
-end;
-
-function TNpcApi.findNpc(id: Integer; var npc: TNPC): Boolean; overload;
-begin
-  Result := Self.findNpc([id], npc);
-end;
-
-function TNpcApi.findNpc(str: String; var npc: TNPC): Boolean; overload;
-begin
-  Result := Self.findNpc([str], npc);
-end;
-
-function TNpcApi.findNpc(idArray: TIntegerArray): Boolean; overload;
+function TNpcApi.findNpc(filter: function(n: TNPC): Boolean): Boolean; overload;
 var
   npc: TNPC;
 begin
-  Result := Self.findNpc(idArray, npc);
+  Result := Self.findNpc(@filter, npc);
   npc.free;
-end;
-
-function TNpcApi.findNpc(strings: TStringArray): Boolean; overload;
-var
-  npc: TNPC;
-begin
-  Result := Self.findNpc(strings, npc);
-  npc.free;
-end;
-
-function TNpcApi.findNpc(id: Integer): Boolean; overload;
-begin
-  Result := Self.findNpc([id]);
-end;
-
-function TNpcApi.findNpc(str: String): Boolean; overload;
-begin
-  Result := Self.findNpc([str]);
 end;

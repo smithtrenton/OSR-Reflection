@@ -14,44 +14,12 @@ type
 
 procedure TWidgetArray.free;
 var
-  i, len: Integer;
+  i, hi: Integer;
 begin
-  len := Length(Self);
-  for i := 0 to len - 1 do
+  hi := High(Self);
+  for i := 0 to hi do
     Self[i].free;
-  setLength(Self, 0);
-end;
-
-procedure TWidgetArray.swap(index1, index2: Integer);
-var
-  temp: TWidget;
-  len: Integer;
-begin
-  len := Length(Self);
-  if (index1 > len) or (index1 < 0) then
-  begin
-    writeln('** TWidgetArray/', GetGlobalName(@Self),
-      ': Index = "', index1, '" out of bounds **');
-    Exit;
-  end if (index2 > len) or (index2 < 0) then
-  begin
-    writeln('** TWidgetArray/', GetGlobalName(@Self),
-      ': Index = "', index2, '" out of bounds **');
-    Exit;
-  end;
-  temp := Self[index1];
-  Self[index1] := Self[index2];
-  Self[index2] := temp;
-end;
-
-procedure TWidgetArray.remove(index: Integer);
-var
-  len: Integer;
-begin
-  len := Length(Self) - 1;
-  Self.swap(index, len);
-  Self[len].free;
-  SetLength(Self, len);
+  Delete(Self, 0);
 end;
 
 function TWidget.toString: String; forward;

@@ -109,44 +109,18 @@ end;
 
 procedure TNPCArray.free;
 var
-  i, len: Integer;
+  i, hi: Integer;
 begin
-  len := Length(Self);
-  for i := 0 to len - 1 do
+  hi := High(Self);
+  for i := 0 to hi do
     Self[i].free;
-  setLength(Self, 0);
-end;
-
-procedure TNPCArray.swap(index1, index2: Integer);
-var
-  temp: TNPC;
-  len: Integer;
-begin
-  len := Length(Self);
-  if (index1 > len) or (index1 < 0) then
-  begin
-    writeln('** TNPCArray/', GetGlobalName(@Self),
-      ': Index = "', index1, '" out of bounds **');
-    Exit;
-  end if (index2 > len) or (index2 < 0) then
-  begin
-    writeln('** TNPCArray/', GetGlobalName(@Self),
-      ': Index = "', index2, '" out of bounds **');
-    Exit;
-  end;
-  temp := Self[index1];
-  Self[index1] := Self[index2];
-  Self[index2] := temp;
+  Delete(Self, 0);
 end;
 
 procedure TNPCArray.remove(index: Integer);
-var
-  len: Integer;
 begin
-  len := Length(Self) - 1;
-  Self.swap(index, len);
-  Self[len].free;
-  SetLength(Self, len);
+  Self[index].free;
+  Delete(Self, index, 1);
 end;
 
 function TNPCArray.toString: String;

@@ -29,7 +29,6 @@ var
 begin
   if (reflectLib.objectManager.getSize > 0) then
   begin
-    writeln('Clearing SmartObjectManager:');
     leaked := reflectLib.freeAllObjects;
     if (leaked > 0) then
       writeln('Freed ' + tostr(leaked) +

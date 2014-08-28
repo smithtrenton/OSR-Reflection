@@ -2,7 +2,7 @@
 RSView
 ======
 
-RSView contains view-related conversion functions
+RSView contains view-related conversion and accessor functions
 
 *)
 
@@ -13,12 +13,17 @@ end;
 
 function TRSClient.getMinimapAngleDeg: Extended;
 begin
-  Result := (Self.getMinimapAngleRaw / 2048.0 * 360);
+  Result := 360 - (Self.getMinimapAngleRaw / 2048.0 * 360);
 end;
 
 function TRSClient.getMinimapAngleRad: Extended;
 begin
   Result := Radians(getMinimapAngleDeg);
+end;
+
+function TRSClient.getCameraAngle: Integer;
+begin
+  Result := Self.getCameraPitch;//TODO: Find Calculation for 0-100
 end;
 
 function TRSClient.getTileHeight(tile: TPoint): Integer;
