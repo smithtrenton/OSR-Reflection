@@ -4,6 +4,12 @@ program new;
 
 var
   Smart: TSmartClient;
+  npcs: TNPCArray;
+
+function BankerFilter(n: PNPC): Boolean;
+begin
+  Result := (Pos('Banker', n^.getName) > 0);
+end;
 
 begin
   SMARTSettings.ShowConsole := False;
@@ -11,7 +17,9 @@ begin
   Smart.Init;
   SetupOSRReflection(Smart.Target);
 
-  writeln(TNpcApi.getNpcs.toString);
+  npcs := npcApi.getNpcs(@BankerFilter);
+  writeln(npcs.toString);
+  npcs.free;
 
   Smart.Free;
 end.

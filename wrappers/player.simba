@@ -10,6 +10,7 @@ Player contains the Player record and accessors
 
 type
   TPlayer = type(TCharacter);
+  PPlayer = ^TPlayer;
   TPlayerArray = array of TPlayer;
   TLocalPlayer = type(TPlayer);
 

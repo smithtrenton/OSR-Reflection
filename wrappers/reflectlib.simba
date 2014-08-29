@@ -54,15 +54,17 @@ begin
   Self.objectManager.removeRef(objref);
 end;
 
-function TReflectLib.freeAllObjects: Integer;
+function TReflectLib.freeAllObjects(debug: Boolean): Integer;
 begin
   Result := 0;
-  writeln('Clearing SmartObjectManager:');
+  if debug then
+    writeln('Clearing SmartObjectManager:');
   while (Self.objectManager.getSize > 0) do
   begin
     if not Self.isNull(Self.objectManager.get(0).ref) then
       SmartFreeObject(Self.smartPointer, Self.objectManager.get(0).ref);
-    writeln(#9 + Self.objectManager.get(0).toString);
+    if debug then
+      writeln(#9 + Self.objectManager.get(0).toString);
     Self.objectManager.remove(0);
     Inc(Result);
   end;

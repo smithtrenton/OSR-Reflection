@@ -29,7 +29,7 @@ var
 begin
   if (reflectLib.objectManager.getSize > 0) then
   begin
-    leaked := reflectLib.freeAllObjects;
+    leaked := reflectLib.freeAllObjects(true);
     if (leaked > 0) then
       writeln('Freed ' + tostr(leaked) +
         ' object reference(s) from SMART, Script has memory leak!');

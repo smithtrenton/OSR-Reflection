@@ -13,7 +13,7 @@ type
 var
   playerApi: TPlayerApi;
 
-function TPlayerApi.getPlayers(filter: function(p: TPlayer): Boolean): TPlayerArray;
+function TPlayerApi.getPlayers(filter: function(p: PPlayer): Boolean): TPlayerArray;
 var
   len, i: Integer;
   player: TPlayer;
@@ -22,7 +22,7 @@ begin
   for i:= 0 to (len - 1) do
   begin
     player.create(0, hook_Client_getLocalPlayers, i);
-    if player.isNull or (not filter(player)) then
+    if player.isNull or (not filter(@player)) then
     begin
       player.free;
       continue;
@@ -40,7 +40,7 @@ begin
   Result := Self.getPlayers(@filter);
 end;
 
-function TPlayerApi.getPlayer(filter: function(p: TPlayer): Boolean): TPlayer;
+function TPlayerApi.getPlayer(filter: function(p: PPlayer): Boolean): TPlayer;
 var
   players: TPlayerArray;
   len: Integer;
@@ -55,14 +55,14 @@ begin
   players.free;
 end;
 
-function TPlayerApi.findPlayers(filter: function(p: TPlayer): Boolean; var players: TPlayerArray): Boolean;
+function TPlayerApi.findPlayers(filter: function(p: PPlayer): Boolean; var players: TPlayerArray): Boolean;
 begin
   players.free;
   players := Self.getPlayers(@filter);
   Result := Length(players) > 0;
 end;
 
-function TPlayerApi.findPlayers(filter: function(p: TPlayer): Boolean): Boolean; overload;
+function TPlayerApi.findPlayers(filter: function(p: PPlayer): Boolean): Boolean; overload;
 var
   players: TPlayerArray;
 begin
@@ -70,7 +70,7 @@ begin
   players.free;
 end;
 
-function TPlayerApi.findPlayer(filter: function(p: TPlayer): Boolean; var player: TPlayer): Boolean;
+function TPlayerApi.findPlayer(filter: function(p: PPlayer): Boolean; var player: TPlayer): Boolean;
 begin
   player.free;
   player := Self.getPlayer(@filter);
@@ -79,7 +79,7 @@ begin
     player.free;
 end;
 
-function TPlayerApi.findPlayer(filter: function(p: TPlayer): Boolean): Boolean; overload;
+function TPlayerApi.findPlayer(filter: function(p: PPlayer): Boolean): Boolean; overload;
 var
   player: TPlayer;
 begin

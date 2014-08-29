@@ -83,7 +83,7 @@ begin
   end;
 end;
 
-function TWidgetApi.getWidgets(filter: function(w: TWidget): Boolean): TWidgetArray;
+function TWidgetApi.getWidgets(filter: function(w: PWidget): Boolean): TWidgetArray;
 var
   i, h, len, len2: Integer;
   groups: TIntegerArray;
@@ -97,7 +97,7 @@ begin
     len2 := Length(widgets);
     for h := 0 to (len2 - 1) do
     begin
-      if widgets[h].isNull or (not filter(widgets[h])) then
+      if widgets[h].isNull or (not filter(@widgets[h])) then
       begin
         widgets[h].free;
         continue;
@@ -116,7 +116,7 @@ begin
   Result := Self.getWidgets(@filter);
 end;
 
-function TWidgetApi.getWidget(filter: function(w: TWidget): Boolean): TWidget;
+function TWidgetApi.getWidget(filter: function(w: PWidget): Boolean): TWidget;
 var
   widgets: TWidgetArray;
   len: Integer;
@@ -131,14 +131,14 @@ begin
   widgets.free;
 end;
 
-function TWidgetApi.findWidgets(filter: function(w: TWidget): Boolean; var widgets: TWidgetArray): Boolean;
+function TWidgetApi.findWidgets(filter: function(w: PWidget): Boolean; var widgets: TWidgetArray): Boolean;
 begin
   widgets.free;
   widgets := Self.getWidgets(@filter);
   Result := Length(widgets) > 0;
 end;
 
-function TWidgetApi.findWidgets(filter: function(w: TWidget): Boolean): Boolean; overload;
+function TWidgetApi.findWidgets(filter: function(w: PWidget): Boolean): Boolean; overload;
 var
   widgets: TWidgetArray;
 begin
@@ -146,7 +146,7 @@ begin
   widgets.free;
 end;
 
-function TWidgetApi.findWidget(filter: function(w: TWidget): Boolean; var widget: TWidget): Boolean;
+function TWidgetApi.findWidget(filter: function(w: PWidget): Boolean; var widget: TWidget): Boolean;
 begin
   widget.free;
   widget := Self.getWidget(@filter);
@@ -155,7 +155,7 @@ begin
     widget.free;
 end;
 
-function TWidgetApi.findWidget(filter: function(w: TWidget): Boolean): Boolean; overload;
+function TWidgetApi.findWidget(filter: function(w: PWidget): Boolean): Boolean; overload;
 var
   widget: TWidget;
 begin

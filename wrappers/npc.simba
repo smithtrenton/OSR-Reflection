@@ -13,6 +13,7 @@ type
   TNPC = record(TCharacter)
     composite: TNpcComposite;
   end;
+  PNPC = ^TNPC;
   TNPCArray = array of TNPC;
 
 function TNPCComposite.getActions: TStringArray;
@@ -59,7 +60,6 @@ function TNPC.getComposite: TNPCComposite;
 begin
   if not(composite.isNull) then
     Exit(composite);
-
   composite.create(Self.ref, hook_NPC_getComposite, 'TNPC.getComposite');
   {if (not composite.isValid) then
   begin
@@ -70,30 +70,22 @@ end;
 
 function TNPC.getActions: TStringArray;
 begin
-  if (composite.isNull) then
-    Self.getComposite;
-  Result := Self.composite.getActions;
+  Result := Self.getComposite.getActions;
 end;
 
 function TNPC.getCombatLevel: Integer;
 begin
-  if (composite.isNull) then
-    Self.getComposite;
-    Result := Self.composite.getCombatLevel;
+  Result := Self.getComposite.getCombatLevel;
 end;
 
 function TNPC.getID: Integer;
 begin
-  if (composite.isNull) then
-    Self.getComposite;
-    Result := Self.composite.getID;
+  Result := Self.getComposite.getID;
 end;
 
 function TNPC.getName: String;
 begin
-  if (composite.isNull) then
-    Self.getComposite;
-    Result := Self.composite.getName;
+  Result := Self.getComposite.getName;
 end;
 
 function TNPC.toString: String;
@@ -103,7 +95,7 @@ end;
 
 procedure TNPC.free; override;
 begin
-  composite.free;
+  Self.composite.free;
   reflectLib.freeObject(Self.ref);
 end;
 
