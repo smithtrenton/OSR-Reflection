@@ -49,24 +49,14 @@ begin
   Result := Length(self);
 end;
 
-procedure TSmartObjectArray.incSize(c: Integer);
+procedure TSmartObjectArray.incSize(c: Integer = 1);
 begin
   Self.SetSize(Self.getSize + c);
 end;
 
-procedure TSmartObjectArray.incSize; overload;
-begin
-  Self.IncSize(1);
-end;
-
-procedure TSmartObjectArray.decSize(c: Integer);
+procedure TSmartObjectArray.decSize(c: Integer = 1);
 begin
   Self.SetSize(Self.getSize - c);
-end;
-
-procedure TSmartObjectArray.decSize; overload;
-begin
-  Self.DecSize(1);
 end;
 
 function TSmartObjectArray.get(index: Integer): TSmartObject;
