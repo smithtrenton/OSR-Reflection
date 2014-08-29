@@ -11,7 +11,6 @@ Npc contains the Npc record and accessors
 type
   TNPCComposite = type(TRSObject);
   TNPC = type(TCharacter);
-  PNPC = ^TNPC;
   TNPCArray = array of TNPC;
 
 function TNPCComposite.getActions: TStringArray;

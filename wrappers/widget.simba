@@ -10,7 +10,6 @@ Widget contains the widget record and accessors
 
 type
   TWidget = type(TRSObject);
-  PWidget = ^TWidget;
   TWidgetArray = array of TWidget;
 
 procedure TWidgetArray.free;
