@@ -6,9 +6,9 @@ var
   Smart: TSmartClient;
   npcs: TNPCArray;
 
-function BankerFilter(n: PNPC): Boolean;
+function BankerFilter(var n: TNPC): Boolean;
 begin
-  Result := (Pos('Banker', n^.getName) > 0);
+  Result := IsStrInArr(n.getName, false, ['Sheep','Ram']);
 end;
 
 begin

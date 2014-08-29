@@ -27,7 +27,7 @@ begin
   ClearSameIntegers(Result);
 end;
 
-function TNpcApi.getNPCs(filter: function(n: PNPC): Boolean): TNPCArray;
+function TNpcApi.getNPCs(filter: function(var n: TNPC): Boolean): TNPCArray;
 var
   indices: TIntegerArray;
   len, i: Integer;
@@ -38,7 +38,7 @@ begin
   for i := 0 to (len - 1) do
   begin
     npc.create(0, hook_Client_getLocalNPCs, indices[i], 'TNpcApi.getNPCs');
-    if (npc.isNull) or (not filter(@npc)) then
+    if (npc.isNull) or (not filter(npc)) then
     begin
       npc.free;
       continue;
@@ -56,7 +56,7 @@ begin
   Result := Self.getNPCs(@filter);
 end;
 
-function TNpcApi.getNpc(filter: function(n: PNPC): Boolean): TNPC;
+function TNpcApi.getNpc(filter: function(var n: TNPC): Boolean): TNPC;
 var
   npcs: TNPCArray;
   len: Integer;
@@ -71,14 +71,14 @@ begin
   npcs.free;
 end;
 
-function TNpcApi.findNpcs(filter: function(n: PNPC): Boolean; var npcs: TNPCArray): Boolean;
+function TNpcApi.findNpcs(filter: function(var n: TNPC): Boolean; var npcs: TNPCArray): Boolean;
 begin
   npcs.free;
   npcs := Self.getNpcs(@filter);
   Result := Length(npcs) > 0;
 end;
 
-function TNpcApi.findNpcs(filter: function(n: PNPC): Boolean): Boolean; overload;
+function TNpcApi.findNpcs(filter: function(var n: TNPC): Boolean): Boolean; overload;
 var
   npcs: TNPCArray;
 begin
@@ -86,7 +86,7 @@ begin
   npcs.free;
 end;
 
-function TNpcApi.findNpc(filter: function(n: PNPC): Boolean; var npc: TNPC): Boolean;
+function TNpcApi.findNpc(filter: function(var n: TNPC): Boolean; var npc: TNPC): Boolean;
 begin
   npc.free;
   npc := Self.getNpc(@filter);
@@ -95,7 +95,7 @@ begin
     npc.free;
 end;
 
-function TNpcApi.findNpc(filter: function(n: PNPC): Boolean): Boolean; overload;
+function TNpcApi.findNpc(filter: function(var n: TNPC): Boolean): Boolean; overload;
 var
   npc: TNPC;
 begin
