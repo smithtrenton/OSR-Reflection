@@ -4,12 +4,6 @@ program new;
 
 var
   Smart: TSmartClient;
-  maxAngle: Integer;
-
-function BankerFilter(var n: TNPC): Boolean;
-begin
-  Result := IsStrInArr(n.getName, false, ['Sheep','Ram']);
-end;
 
 begin
   SMARTSettings.ShowConsole := False;
