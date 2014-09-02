@@ -23,7 +23,7 @@ end;
 
 function TRSClient.getCameraAngle: Integer;
 begin
-  Result := Self.getCameraPitch;//TODO: Find Calculation for 0-100
+  Result := Floor(((Self.getCameraPitch - 128) / 255) * 100);//TODO: Find Calculation for 0-100
 end;
 
 function TRSClient.getTileHeight(tile: TPoint): Integer;

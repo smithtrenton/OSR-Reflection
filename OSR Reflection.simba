@@ -14,7 +14,7 @@ const
 //Wrapper Includes
 {$include_once data\globals.simba}
 {$include_once wrappers\rsobject.simba}
-{$include_once wrappers\client.simba}
+{$include_once wrappers\rsclient.simba}
 {$include_once wrappers\rsview.simba}
 
 //API Includes

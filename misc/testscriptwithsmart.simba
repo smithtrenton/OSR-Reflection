@@ -4,7 +4,7 @@ program new;
 
 var
   Smart: TSmartClient;
-  npcs: TNPCArray;
+  maxAngle: Integer;
 
 function BankerFilter(var n: TNPC): Boolean;
 begin
@@ -17,9 +17,7 @@ begin
   Smart.Init;
   SetupOSRReflection(Smart.Target);
 
-  npcs := npcApi.getNpcs(@BankerFilter);
-  writeln(npcs.toString);
-  npcs.free;
+
 
   Smart.Free;
 end.
