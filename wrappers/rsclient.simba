@@ -7,7 +7,7 @@ RSClient contains the rsclient record and accessors
 *)
 
 type
-  TRSClient = type(TApi);
+  TRSClient = type(TRSObject);
 
 var
   rsclient: TRSClient;

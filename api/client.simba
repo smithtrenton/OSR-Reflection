@@ -1,0 +1,17 @@
+(*
+Client
+======
+
+Client contains client and view-related api functions
+
+*)
+
+type
+  TClientApi = type(TApi);
+
+var
+  clientApi: TClientApi;
+
+procedure TClientApi.setMinimapAngle(angle: Integer);
+begin
+end;

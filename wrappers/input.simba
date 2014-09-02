@@ -1,0 +1,36 @@
+(*
+Input
+=====
+
+Input contains keyboard and mouse functions
+
+*)
+
+type
+  TInput = type(TApi);
+
+var
+  rsinput: TInput;
+
+procedure TInput.typeByte(k: Byte; waitT: Integer = 10; rndT: Integer = 50);
+begin
+  if (k = 13) then
+    k := 10;
+  KeyDown(k);
+  Wait(waitT + random(rndT));
+  KeyUp(k);
+end;
+
+procedure TInput.typeSend(str: String; sendEnter: Boolean = true);
+var
+  i: Integer;
+begin
+  for i := 1 to Length(str) do
+  begin
+    SendKeys(str[i], 30 + random(30), 30 + random(30));
+    Wait(40 + random(40));
+  end;
+
+  if sendEnter then
+    Self.typeByte(VK_ENTER);
+end;
