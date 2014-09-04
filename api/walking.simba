@@ -1,0 +1,17 @@
+(*
+Walking
+=======
+
+Walking contains walking api functions
+
+*)
+
+type
+  TWalkApi = type(TApi);
+
+var
+  walkApi: TWalkApi;
+
+function TWalkApi.traversePath(path: TPointArray; reversed: Boolean = false;): Boolean;
+begin
+end;

@@ -23,6 +23,7 @@ const
 {$include_once api\npcs.simba}
 {$include_once api\players.simba}
 {$include_once api\client.simba}
+{$include_once api\walking.simba}
 
 //Global Destructor
 procedure FreeOSRReflection;

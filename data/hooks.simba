@@ -14,14 +14,14 @@ type
 
 function THook.isNull: Boolean;
 begin
-  Result := (self.path = '') or (self.name = '');
+  Result := (Self.path = '') or (Self.name = '');
 end;
 
-function THook.toStr: String;
+function THook.toString: String;
 begin
-  Result := 'Hook[' + self.name + ']: ' + self.path;
-  if (self.mult <> 1) then
-    Result := Result + #13#10#9 + 'Multiplier: ' + toString(self.mult);
+  Result := 'Hook[' + Self.name + ']: ' + Self.path;
+  if (Self.mult <> 1) then
+    Result := Result + #13#10#9 + 'Multiplier: ' + IntToStr(Self.mult);
 end;
 
 const
