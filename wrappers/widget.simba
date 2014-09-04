@@ -371,5 +371,3 @@ function TWidget.toString: String;
 begin
   Result := 'Widget[' + Self.getIndicesString + ']: Text = "' + Self.getText + '"';
 end;
-
-

@@ -4,7 +4,7 @@ Hooks
 
 Contains hook constants and the THook type
 
-*)
+*) 
 
 type
   THook = record
@@ -14,14 +14,14 @@ type
 
 function THook.isNull: Boolean;
 begin
-  Result := (Self.path = '') or (Self.name = '');
+  Result := (self.path = '') or (self.name = '');
 end;
 
-function THook.toString: String;
+function THook.toStr: String;
 begin
-  Result := 'Hook[' + Self.name + ']: ' + Self.path;
-  if (Self.mult <> 0) then
-    Result := Result + #13#10#9 + 'Multiplier: ' + IntToStr(Self.mult);
+  Result := 'Hook[' + self.name + ']: ' + self.path;
+  if (self.mult <> 1) then
+    Result := Result + #13#10#9 + 'Multiplier: ' + toString(self.mult);
 end;
 
 const
@@ -296,3 +296,4 @@ const
 
   hook_WidgetNode: THook = ['e', 'WidgetNode', 0];
     hook_WidgetNode_getID: THook = ['t', 'getID', 2097571581];
+
