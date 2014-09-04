@@ -11,7 +11,5 @@ begin
   Smart.Init;
   SetupOSRReflection(Smart.Target);
 
-  writeln(clientApi.setCameraAngle(false));
-
   Smart.Free;
 end.
