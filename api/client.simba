@@ -12,6 +12,84 @@ type
 var
   clientApi: TClientApi;
 
-procedure TClientApi.setMinimapAngle(angle: Integer);
+function TClientApi.setMinimapAngle(angle: Extended; randOff: Integer = 15): Boolean;
+var
+  mm, cw, ccw: Extended;
+  keyByte: Byte;
+  t: LongWord;
 begin
+  angle := fixD(angle);
+  mm := rsclient.getMinimapAngleDeg;
+  ccw := Abs(angle - mm);
+  cw := 360 - ccw;
+  if (MinE(ccw, cw) <= randOff) then
+    Exit(False);
+
+  keyByte := VK_LEFT;
+  if (((Abs(ccw - cw) <= 20) and (Random(2) <> 0)) or (ccw > cw)) then
+    keyByte += 2;
+
+  KeyDown(keyByte);
+  t := GetSystemTime;
+  wait(15 + random(50));
+  while ((Abs(angle - rsclient.getMinimapAngleDeg) > randOff) and (GetSystemTime - t < 6000))do
+    wait(RandomRange(10,16));
+  KeyUp(keyByte);
+  Wait(50 + random(60));
+
+  Result := Abs(angle - Round(rsclient.getMinimapAngleDeg)) <= randOff;
+end;
+
+function TClientApi.setCameraAngle(angle: Integer; off: Integer = 5): Boolean;
+var
+  keyByte: Byte;
+  t: LongWord;
+begin
+  if (not InRange(angle, 0, 100)) then
+  begin
+    Writeln('Angle out of range - TClientApi.setCameraAngle');
+    Exit(False);
+  end;
+  if (InRange(rsclient.getCameraAngle, angle - off, angle + off)) then
+    Exit(True);
+
+  keyByte := VK_UP;
+  writeln(rsclient.getCameraAngle - angle);
+  if (angle - rsclient.getCameraAngle < 0) then
+    keyByte += 2;
+
+  KeyDown(keyByte);
+  t := GetSystemTime;
+  wait(15 + random(50));
+  while ((Abs(rsclient.getCameraAngle - angle) > off) and (GetSystemTime - t < 5000))do
+    wait(RandomRange(10,16));
+  Wait(50 + random(60));
+  KeyUp(keyByte);
+  Wait(50 + random(60));
+
+  Result := Abs(rsclient.getCameraAngle - angle) <= off;
+end;
+
+function TClientApi.setCameraAngle(high: Boolean): Boolean; overload;
+var
+  keyByte: Byte;
+  t: LongWord;
+begin
+  if (rsclient.getCameraAngle = (Ord(high) * 100)) then
+    Exit(True);
+
+  keyByte := VK_UP;
+  if (not high) then
+    keyByte += 2;
+
+  KeyDown(keyByte);
+  t := GetSystemTime;
+  wait(RandomRange(15, 65));
+  while ((rsclient.getCameraAngle <> (Ord(high) * 100)) and (GetSystemTime - t < 5000))do
+    wait(RandomRange(10,16));
+  Wait(RandomRange(100, 600));
+  KeyUp(keyByte);
+  Wait(RandomRange(10, 70));
+
+  Result := (rsclient.getCameraAngle = (Ord(high) * 100));
 end;
