@@ -130,6 +130,8 @@ const
     hook_Client_getWidgetSettings: THook = ['ei.f', 'getWidgetSettings', 0];
     hook_Client_getWidgetVarps: THook = ['ei.f', 'getWidgetVarps', 0];
     hook_Client_isMenuOpen: THook = ['client.hr', 'isMenuOpen', 0];
+    hook_Client_getCosineTable: THook = ['cv.ah', 'getCosineTable', 0];
+    hook_Client_getSineTable: THook = ['cv.ao', 'getSineTable', 0];  
 
   hook_CollisionMap: THook = ['go', 'CollisionMap', 0];
     hook_CollisionMap_getFlags: THook = ['ab', 'getFlags', 0];
