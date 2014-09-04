@@ -129,11 +129,6 @@ begin
   Result := reflectLib.getFieldString(Self.ref, hook_Widget_getText);
 end;
 
-function TWidget.getType: Integer;
-begin
-  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getType);
-end;
-
 function TWidget.getID: Integer;
 begin
   Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getID);
@@ -376,5 +371,3 @@ function TWidget.toString: String;
 begin
   Result := 'Widget[' + Self.getIndicesString + ']: Text = "' + Self.getText + '"';
 end;
-
-
