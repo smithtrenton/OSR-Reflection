@@ -139,62 +139,46 @@ begin
   Result := reflectLib.getFieldBoolean(Self.ref, hook_Character_isInSequence);
 end;
 
-
-function TCharacter.isInteracting():boolean;
+function TCharacter.isInteracting: Boolean;
 begin
-  result := not(self.getInteractingIndex = -1);
+  result := (self.getInteractingIndex > 0);
 end;
 
-
-function TCharacter.getInteracting():TCharacter;
+function TCharacter.getInteracting: TCharacter;
 var
-  index:integer;
-  interacter:TCharacter;
+  index: Integer;
+  hook: THook;
 begin
-  index := Self.getInteractingIndex();
-  if(index = -1) then
-    result := interacter;
-  if(index < _INTERACTING_INDEX) then
-  begin
-    interacter.create(0, hook_Client_getLocalNPCs, index, 'TCharacter.getInteracting');
-    if (interacter.isNull) then
-    begin
-      interacter.free;
-      result := interacter;
-      exit;
-    end;
-    result := interacter;
-  end else
-    if(index > _INTERACTING_INDEX) then
-    begin
-      interacter.create(0,hook_Client_getLocalPlayers,index-_INTERACTING_INDEX, 'TCharacter.getInteracting');
-       if (interacter.isNull) then
-      begin
-        interacter.free;
-        result := interacter;
-        exit;
-      end;
-      result := interacter;
-    end else
-      result := interacter;
-end;
-
-function TCharacter.getHealthPercentage():extended;
-begin
-  if(Self.getMaxHealth() <= 0) then
-    result := 0
+  index := Self.getInteractingIndex;
+  if (index < 0) then
+    Exit
+  else if (index < _CHARACTER_INTERACTING_OFFSET) then
+    hook := hook_Client_getLocalNPCs
   else
-    result := 100 * (Self.getHealth()/Self.getMaxHealth());
+  begin
+    hook := hook_Client_getLocalPlayers;
+    index -= _CHARACTER_INTERACTING_OFFSET;
+  end;
+
+  Result.create(0, hook, index, 'TCharacter.getInteracting');
+  if (Result.isNull) then
+    Result.free;
 end;
 
-function TCharacter.isAnimating():boolean;
+function TCharacter.getHealthPercentage: Extended;
 begin
-  result := not Self.getAnimation = -1;
+  if(Self.getMaxHealth > 0) then
+    Result := (100 * (Self.getHealth / Self.getMaxHealth));
 end;
 
-function TCharacter.isMoving():boolean;
+function TCharacter.isAnimating: Boolean;
 begin
-  result := not Self.getQueueLength = 0;
+  Result := (Self.getAnimation > 0);
+end;
+
+function TCharacter.isMoving: Boolean;
+begin
+  Result := (Self.getQueueLength > 0);
 end;
 
 
