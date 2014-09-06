@@ -2,11 +2,14 @@ program new;
 {$i standaloneSMART\standaloneSMART.simba}
 {$i OSR-Reflection\OSR Reflection.simba}
 
+var
+  Smart: TSmartClient;
 
 begin
-  SMARTSettings.ShowConsole := true;
+  SMARTSettings.ShowConsole := False;
   SMARTSettings.ForceNew := False;
   Smart.Init;
   SetupOSRReflection(Smart.Target);
-  SMART.Free();
+
+  Smart.Free;
 end.
