@@ -139,3 +139,65 @@ begin
   Result := reflectLib.getFieldBoolean(Self.ref, hook_Character_isInSequence);
 end;
 
+
+function TCharacter.isInteracting():boolean;
+begin
+  result := not(self.getInteractingIndex = -1);
+end;
+
+
+function TCharacter.getInteracting():TCharacter;
+var
+  index:integer;
+  interacter:TCharacter;
+begin
+  index := Self.getInteractingIndex();
+  if(index = -1) then
+    result := interacter;
+  if(index < _INTERACTING_INDEX) then
+  begin
+    interacter.create(0, hook_Client_getLocalNPCs, index, 'TCharacter.getInteracting');
+    if (interacter.isNull) then
+    begin
+      interacter.free;
+      result := interacter;
+      exit;
+    end;
+    result := interacter;
+  end else
+    if(index > _INTERACTING_INDEX) then
+    begin
+      interacter.create(0,hook_Client_getLocalPlayers,index-_INTERACTING_INDEX, 'TCharacter.getInteracting');
+       if (interacter.isNull) then
+      begin
+        interacter.free;
+        result := interacter;
+        exit;
+      end;
+      result := interacter;
+    end else
+      result := interacter;
+end;
+
+function TCharacter.getHealthPercentage():extended;
+begin
+  if(Self.getMaxHealth() <= 0) then
+    result := 0
+  else
+    result := 100 * (Self.getHealth()/Self.getMaxHealth());
+end;
+
+function TCharacter.isAnimating():boolean;
+begin
+  result := not Self.getAnimation = -1;
+end;
+
+function TCharacter.isMoving():boolean;
+begin
+  result := not Self.getQueueLength = 0;
+end;
+
+
+
+
+
