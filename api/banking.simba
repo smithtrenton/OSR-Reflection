@@ -1,0 +1,30 @@
+(*
+Banking
+=======
+
+Banking contains banking api functions
+
+*)
+
+{$include_once ../wrappers/itemcomposite.simba}
+
+type
+  TBankingApi = type(TApi);
+var
+  bankingAPI: TBankingApi;
+const
+  BANK_INTERFACE = 12;
+  DEPOSITBOX_INTERFACE = 11;
+  PIN_INTERFACE = 13;
+
+
+function TBankingAPI.isOpen(option:Integer):boolean;
+begin
+  result := reflectLib.getFieldArrayBoolean(0,hook_Client_getValidWidgets, option);
+end;
+
+
+
+
+
+

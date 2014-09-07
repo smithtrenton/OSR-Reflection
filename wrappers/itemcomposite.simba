@@ -1,0 +1,33 @@
+(*
+ItemComposite
+=========
+
+ItemComposite contains the ItemComposite record and accessors
+
+*)
+
+type
+  TItemComposite = type(TRSObject);
+
+
+function TItemComposite.getGroundActions: TStringArray;
+begin
+result := reflectLib.getFieldStringArray(Self.ref, hook_ItemComposite_getGroundActions);
+end;
+
+function TItemComposite.getName: String;
+begin
+result := reflectLib.getFieldString(Self.ref, hook_ItemComposite_getName);
+end;
+
+function TItemComposite.getWidetActions: TStringArray;
+begin
+result := reflectLib.getFieldStringArray(Self.ref, hook_ItemComposite_getWidgetActions);
+end;
+
+ function TItemComposite.getMembers: boolean;
+begin
+  result := reflectLib.getFieldBoolean(Self.ref, hook_ItemComposite_isMembers);
+end;
+
+
