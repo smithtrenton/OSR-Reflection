@@ -10,16 +10,20 @@ Banking contains banking api functions
 {$include_once widgets.simba}
 
 
+
 type
   TBankingApi = type(TApi);
 var
   bankingAPI: TBankingApi;
 
 
+
+
 function TBankingAPI.isOpen(option:Integer):boolean;
 begin
   result := reflectLib.getFieldArrayBoolean(0,hook_Client_getValidWidgets, option);
 end;
+
 
 function TBankingAPI.getTabCount():integer;
 var
@@ -39,6 +43,7 @@ begin
   Bank.free;
   result := C;
 end;
+
 
 
 
