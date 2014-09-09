@@ -8,7 +8,7 @@ Banking contains banking api functions
 
 {$include_once ../wrappers/itemcomposite.simba}
 {$include_once widgets.simba}
-=======
+
 
 type
   TBankingApi = type(TApi);
@@ -38,7 +38,6 @@ begin
   tmp.free;
   Bank.free;
   result := C;
-
 end;
 
 
