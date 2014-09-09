@@ -25,7 +25,7 @@ begin
 end;
 
 
-function TBankingAPI.getTabCount():integer;
+function TBankingAPI.getTabCount:integer;
 var
   C,I : integer;
   tabs,Bank: Twidget;
