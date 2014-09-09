@@ -102,7 +102,7 @@ const
     hook_Client_getMapOffset: THook = ['client.df', 'getMapOffset', 816991303];
     hook_Client_getMapScale: THook = ['client.dg', 'getMapScale', 1186981241];
     hook_Client_getMenuActions: THook = ['client.ik', 'getMenuActions', 0];
-    hook_Client_getMenuCount: THook = ['client.ak', 'getMenuCount', 1851881611];
+    hook_Client_getMenuCount: THook = ['client.ip', 'getMenuCount', -686236781];
     hook_Client_getMenuHeight: THook = ['ah.io', 'getMenuHeight', -1940027677];
     hook_Client_getMenuOptions: THook = ['client.iq', 'getMenuOptions', 0];
     hook_Client_getMenuWidth: THook = ['cf.im', 'getMenuWidth', -497476525];

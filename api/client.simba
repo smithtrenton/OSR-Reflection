@@ -70,26 +70,26 @@ begin
   Result := Abs(rsclient.getCameraAngle - angle) <= off;
 end;
 
-function TClientApi.setCameraAngle(high: Boolean): Boolean; overload;
+function TClientApi.setCameraAngle(hi: Boolean): Boolean; overload;
 var
   keyByte: Byte;
   t: LongWord;
 begin
-  if (rsclient.getCameraAngle = (Ord(high) * 100)) then
+  if (rsclient.getCameraAngle = (Ord(hi) * 100)) then
     Exit(True);
 
   keyByte := VK_UP;
-  if (not high) then
+  if (not hi) then
     keyByte += 2;
 
   KeyDown(keyByte);
   t := GetSystemTime;
   wait(RandomRange(15, 65));
-  while ((rsclient.getCameraAngle <> (Ord(high) * 100)) and (GetSystemTime - t < 5000))do
+  while ((rsclient.getCameraAngle <> (Ord(hi) * 100)) and (GetSystemTime - t < 5000))do
     wait(RandomRange(10,16));
   Wait(RandomRange(100, 600));
   KeyUp(keyByte);
   Wait(RandomRange(10, 70));
 
-  Result := (rsclient.getCameraAngle = (Ord(high) * 100));
+  Result := (rsclient.getCameraAngle = (Ord(hi) * 100));
 end;
