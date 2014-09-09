@@ -1,0 +1,48 @@
+(*
+Banking
+=======
+
+Banking contains banking api functions
+
+*)
+
+{$include_once ../wrappers/itemcomposite.simba}
+{$include_once widgets.simba}
+
+type
+  TBankingApi = type(TApi);
+var
+  bankingAPI: TBankingApi;
+
+
+
+function TBankingAPI.isOpen(option:Integer):boolean;
+begin
+  result := reflectLib.getFieldArrayBoolean(0,hook_Client_getValidWidgets, option);
+end;
+
+function TBankingAPI.getTabCount():integer;
+var
+  C,I : integer;
+  tabs,Bank: Twidget;
+  tmp:TWidgetArray;
+begin
+  if(not(Self.isOpen(BANK_INTERFACE))) then
+    exit;
+  C := 0;
+  Bank := widgetAPI.getWidgetIndex(BANK_INTERFACE, TABS_PANE);
+  tmp := Bank.getChildren();
+  for i := 0 to High(tmp) do
+    if(Length(tmp[i].getActions) > 2) then
+      Inc(C);
+  tmp.free;
+  Bank.free;
+  result := C;
+
+end;
+
+
+
+
+
+
