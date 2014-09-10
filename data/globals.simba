@@ -8,16 +8,89 @@ Constants contains globals and constants
 
 type
   TApi = type(Pointer);
+  TMath = type(TApi);
+
+var
+  math: TMath;
 
 const
+//RSView Constants
   _LOCAL_XY_SHIFT = 7;
   _MAP_X_OFFSET = 643;
   _MAP_Y_OFFSET = 83;
+
+//Character Constants
   _CHARACTER_INTERACTING_OFFSET = 32768;
+
+//Interface Constants
   BANK_INTERFACE = 12;
+  BANK_TABS_PANE = 8;
   DEPOSITBOX_INTERFACE = 11;
   PIN_INTERFACE = 13;
-  TABS_PANE = 8;
+
+//SRL Constants
 {$IFNDEF SRL}
+  mouse_Move = -1;
   VK_ENTER = {$IFDEF LINUX}10{$ELSE}VK_RETURN{$ENDIF};
 {$ENDIF}
+
+
+function TMath.boxMullerRandom: Extended;
+var
+  x, y, r: Extended;
+begin
+  repeat
+    x := 2.0 * RandomE - 1.0;
+    y := 2.0 * RandomE - 1.0;
+    r := x*x + y*y;
+  until (r < 1) and not(r = 0);
+  Result := x * sqrt(-2.0 * ln(r) / r);
+end;
+
+function TMath.boxMullerRandom(minI, maxI: Extended): Extended; overload;
+var
+  valid: Boolean;
+  mean, dev: Extended;
+  t: Integer;
+begin
+  mean := (maxI + minI)/2.0;
+  dev  := abs(maxI - minI)/2.0 * 0.3;
+
+  t := 0;
+  while ((not valid) and (t < 100)) do
+  begin
+    Result := mean + dev * boxMullerRandom;
+    valid := ((Result >= minI) and (Result <= maxI));
+
+    inc(t);
+  end;
+
+  if (not valid) then
+    writeln('-- ERROR: **boxMuller failed**');
+end;
+
+function TMath.boxMullerRandom(maxI: Extended): Extended; overload;
+begin
+  Result := boxMullerRandom(0.0 , maxI);
+end;
+
+function TMath.boxMullerRandom(minI, maxI: Integer): Integer; overload;
+begin
+  Result := Floor(boxMullerRandom(minI + 0.0, maxI + 0.0));
+end;
+
+function TMath.boxMullerRandom(maxI: Integer): Integer; overload;
+begin
+  Result := boxMullerRandom(0, maxI);
+end;
+
+function TMath.boxMullerRandom(box: TBox): TPoint; overload;
+var
+  p: TPoint;
+begin
+  p.x := Self.boxMullerRandom(box.x1, box.x2);
+  p.y := Self.boxMullerRandom(box.y1, box.y2);
+
+  if (not PointInBox(p, box)) then
+    writeln('boxMullerRandom(TBox)', Format('Point invalid (%d, %d)', [p.x, p.y]));
+end;

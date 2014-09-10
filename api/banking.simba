@@ -34,7 +34,7 @@ begin
   if(not(Self.isOpen(BANK_INTERFACE))) then
     exit;
   C := 0;
-  Bank := widgetAPI.getWidgetIndex(BANK_INTERFACE, TABS_PANE);
+  Bank := widgetAPI.getWidgetIndex(BANK_INTERFACE, BANK_TABS_PANE);
   tmp := Bank.getChildren();
   for i := 0 to High(tmp) do
     if(Length(tmp[i].getActions) > 2) then

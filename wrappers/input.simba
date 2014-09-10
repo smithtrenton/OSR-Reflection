@@ -34,3 +34,175 @@ begin
   if sendEnter then
     Self.typeByte(VK_ENTER);
 end;
+
+function TInput.windPoints(xs, ys, xe, ye, gravity, wind, targetArea: extended): TPointArray;
+var
+  veloX,veloY,windX,windY,veloMag,dist,randomDist,lastDist,D: extended;
+  lastX,lastY,MSP,W,T,TDist: integer;
+  sqrt2,sqrt3,sqrt5,maxStep,rCnc: extended;
+begin
+  MSP  := 20;
+  sqrt2:= sqrt(2);
+  sqrt3:= sqrt(3);
+  sqrt5:= sqrt(5);
+
+  TDist := distance(round(xs), round(ys), round(xe), round(ye));
+  t := getSystemTime() + 5000;
+  repeat
+    if (getSystemTime() > t) then
+      break;
+
+    dist:= hypot(xs - xe, ys - ye);
+    wind:= minE(wind, dist);
+    if (dist < 1) then
+      dist := 1;
+
+    D := (round((round(TDist)*0.3))/7);
+    if (D > 25) then
+      D := 25;
+    if (D < 5) then
+      D := 5;
+
+    rCnc := random(6);
+    if (rCnc = 1) then
+      D := randomRange(2,3);
+
+    if (D <= round(dist)) then
+      maxStep := D
+    else
+      maxStep := round(dist);
+
+    if dist >= targetArea then
+    begin
+      windX:= windX / sqrt3 + (random(round(wind) * 2 + 1) - wind) / sqrt5;
+      windY:= windY / sqrt3 + (random(round(wind) * 2 + 1) - wind) / sqrt5;
+    end else
+    begin
+      windX:= windX / sqrt2;
+      windY:= windY / sqrt2;
+    end;
+
+    veloX:= veloX + windX;
+    veloY:= veloY + windY;
+    veloX:= veloX + gravity * (xe - xs) / dist;
+    veloY:= veloY + gravity * (ye - ys) / dist;
+
+    if (hypot(veloX, veloY) > maxStep) then
+    begin
+      randomDist:= maxStep / 2.0 + random(round(maxStep) div 2);
+      veloMag:= sqrt(veloX * veloX + veloY * veloY);
+      veloX:= (veloX / veloMag) * randomDist;
+      veloY:= (veloY / veloMag) * randomDist;
+    end;
+
+    lastX:= round(xs);
+    lastY:= round(ys);
+    xs:= xs + veloX;
+    ys:= ys + veloY;
+
+    if (lastX <> round(xs)) or (lastY <> round(ys)) then
+      Insert(Point(round(xs), round(ys)), Result);
+
+    lastdist:= dist;
+  until(hypot(xs - xe, ys - ye) < 1)
+
+  if (round(xe) <> round(xs)) or (round(ye) <> round(ys)) then
+    Insert(Point(round(xe), round(ye)), Result);
+  InvertTPA(Result);
+end;
+
+procedure TInput.move(x, y: Integer; rx: Integer = 0; ry: Integer = 0);
+var
+  cx, cy, i, s, w, len: Integer;
+  points: TPointArray;
+begin
+  GetMousePos(cx, cy);
+  if (x = cx and y = cy) then
+    Exit;
+  points := Self.windPoints(cx, cy, x + RandomRange(-rx, rx), y + RandomRange(-ry, ry), 8, 10, RandomRange(0,20) + RandomE);
+  s := RandomRange(25, 35);
+  len := Length(points);
+  for i := 0 to (len - 1) do
+  begin
+    MoveMouse(points[i].x, points[i].y);
+    w := (Random(Round(100/s))*6);
+    if (w < 5) then
+      w := 5;
+    W := round(W * 1.2);
+    Wait(w);
+  end;
+end;
+
+procedure TInput.move(p: TPoint; rx: Integer = 0; ry: Integer = 0); overload;
+begin
+  Self.move(p.x, p.y, rx, ry);
+end;
+
+procedure TInput.click(x, y: Integer; rx: Integer = 0; ry: Integer = 0; button: Integer = mouse_Move);
+begin
+  Self.move(x, y, rx, ry);
+  if button > mouse_Move then
+  begin
+    getMousePos(x, y);
+    holdMouse(x, y, button);
+    wait(randomRange(60, 150));
+    getMousePos(x, y);
+    releaseMouse(x, y, button);
+  end;
+end;
+
+procedure TInput.click(p: TPoint; rx: Integer = 0; ry: Integer = 0; button: Integer = mouse_Left); overload;
+begin
+  Self.click(p.x, p.y, rx, ry, button);
+end;
+
+procedure TInput.drag(sx, sy, dx, dy: Integer; rx: Integer = 0; ry: Integer = 0);
+begin
+  Self.move(sx, sy, rx, ry);
+  getMousePos(sx, sy);
+  holdMouse(sx, sy, mouse_Left);
+  wait(random(100));
+  Self.move(dx, dy, rx, ry);
+  getMousePos(dx, dy);
+  wait(random(100));
+  releaseMouse(dx, dy, mouse_Left);
+end;
+
+procedure TInput.drag(s, d: TPoint); overload;
+begin
+  Self.drag(s.x, s.y, d.x, d.y);
+end;
+
+procedure TInput.scroll(x, y: Integer; rx: Integer = 0; ry: Integer = 0; scrolls: Integer; down: Boolean);
+var
+  c: integer;
+begin
+  self.move(x, y, rx, ry);
+  getMousePos(x, y);
+
+  repeat
+    if (down) then
+      scrollMouse(x, y, 1)
+    else
+      scrollMouse(x, y, -1);
+
+    wait(16 + random(200));
+    inc(c);
+  until(c >= scrolls);
+end;
+
+procedure TInput.scroll(p: TPoint; rx: Integer = 0; ry: Integer = 0; scrolls: Integer; down: Boolean); overload;
+begin
+  Self.scroll(p.x, p.y, rx, ry, scrolls, down);
+end;
+
+procedure TInput.box(b: TBox; button: Integer = mouse_Move);
+var
+  p: TPoint;
+begin
+  getMousePos(p.x, p.y);
+
+  if (not pointInBox(p, b)) then
+    p := math.boxMullerRandom(b);
+  Self.click(p, button);
+end;
