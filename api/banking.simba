@@ -6,7 +6,7 @@ Banking contains banking api functions
 
 *)
 
-{$include_once ../wrappers/itemcomposite.simba}
+{$include_once ../wrappers/grounditem.simba}
 {$include_once widgets.simba}
 
 
