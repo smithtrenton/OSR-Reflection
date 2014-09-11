@@ -58,7 +58,7 @@ end;
 function TNPC.getComposite: TNPCComposite;
 begin
   if (composite.ref <= 0) then
-    composite.create(Self.ref, hook_NPC_getComposite, 'TNPC.getComposite:' + composite.getName);
+    composite.create(Self.ref, hook_NPC_getComposite, 'TNPC.getComposite');
   Result := composite;
 end;
 
