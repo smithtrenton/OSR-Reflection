@@ -11,6 +11,7 @@ type
   TNodeArray = array of TNode;
   THashTable = type(TRSObject);
   TCache = type(TRSObject);
+  TLinkedList = type(TRSObject);
 
 function TNode.getNext: TNode;
 begin
@@ -82,14 +83,12 @@ begin
   nodes := hashTable.getNodes;
   try
     len := Length(nodes);
-    writeln('len: ', len);
     for i := 0 to (len - 1) do
     begin
       node := nodes[i].getNext;
 
       while (nodes[i].getUID <> node.getUID) do
       begin
-        writeln(reflectLib.getFieldString(node.ref, hook_NPCComposite_getName));
         if (id = node.getUID) then
         begin
           Result := node.ref;
@@ -109,4 +108,14 @@ begin
     nodes.free;
     hashTable.free;
   end;
+end;
+
+function TLinkedList.getHead: TNode;
+begin
+  Result.create(Self.ref, hook_LinkedList_getHead);
+end;
+
+function TLinkedList.getTail: TNode;
+begin
+  Result.create(Self.ref, hook_LinkedList_getTail);
 end;

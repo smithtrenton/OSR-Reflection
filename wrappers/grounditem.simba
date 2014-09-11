@@ -1,0 +1,70 @@
+(*
+ItemComposite
+=========
+
+ItemComposite contains the ItemComposite record and accessors
+
+*)
+
+type
+  TItemComposite = type(TRSObject);
+  TItemLayer = type(TRSObject);
+  TGroundItem = type(TRSObject);
+
+
+function TItemComposite.getGroundActions: TStringArray;
+begin
+  Result := reflectLib.getFieldStringArray(Self.ref, hook_ItemComposite_getGroundActions);
+end;
+
+function TItemComposite.getName: String;
+begin
+  Result := reflectLib.getFieldString(Self.ref, hook_ItemComposite_getName);
+end;
+
+function TItemComposite.getWidgetActions: TStringArray;
+begin
+  Result := reflectLib.getFieldStringArray(Self.ref, hook_ItemComposite_getWidgetActions);
+end;
+
+function TItemComposite.getMembers: boolean;
+begin
+  Result := reflectLib.getFieldBoolean(Self.ref, hook_ItemComposite_isMembers);
+end;
+
+function TItemLayer.getX: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_ItemLayer_getX);
+end;
+
+function TItemLayer.getY: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_ItemLayer_getY);
+end;
+
+function TItemLayer.getPlane: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_ItemLayer_getPlane);
+end;
+
+function TItemLayer.getId: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_ItemLayer_getId);
+end;
+
+function TItemLayer.getHeight: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_ItemLayer_getHeight);
+end;
+
+function TGroundItem.getId: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_Item_getId);
+end;
+
+function TGroundItem.getStackSize: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_Item_getStackSize);
+end;
+
+
