@@ -20,7 +20,7 @@ end;
 function THook.toString: String;
 begin
   Result := 'Hook[' + Self.name + ']: ' + Self.path;
-  if (Self.mult <> 1) then
+  if (Self.mult <> 0) then
     Result := Result + #13#10#9 + 'Multiplier: ' + IntToStr(Self.mult);
 end;
 

@@ -10,7 +10,9 @@ Npc contains the Npc record and accessors
 
 type
   TNPCComposite = type(TRSObject);
-  TNPC = type(TCharacter);
+  TNPC = record(TCharacter)
+    composite: TNPCComposite;
+  end;
   TNPCArray = array of TNPC;
 
 function TNPCComposite.getActions: TStringArray;
@@ -55,48 +57,41 @@ end;
 
 function TNPC.getComposite: TNPCComposite;
 begin
-  Result.create(Self.ref, hook_NPC_getComposite, 'TNPC.getComposite');
+  if not(composite.isValid) then
+    composite.create(Self.ref, hook_NPC_getComposite, 'TNPC.getComposite');
+  Result := composite;
 end;
 
 function TNPC.getActions: TStringArray;
-var
-  comp: TNPCComposite;
 begin
-  comp := Self.getComposite;
-  Result := comp.getActions;
-  comp.free;
+  Result := Self.getComposite.getActions;
 end;
 
 function TNPC.getCombatLevel: Integer;
-var
-  comp: TNPCComposite;
 begin
-  comp := Self.getComposite;
-  Result := comp.getCombatLevel;
-  comp.free;
+  Result := Self.getComposite.getCombatLevel;
 end;
 
 function TNPC.getID: Integer;
-var
-  comp: TNPCComposite;
 begin
-  comp := Self.getComposite;
-  Result := comp.getID;
-  comp.free;
+  Result := Self.getComposite.getID;
 end;
 
 function TNPC.getName: String;
-var
-  comp: TNPCComposite;
 begin
-  comp := Self.getComposite;
-  Result := comp.getName;
-  comp.free;
+  Result := Self.getComposite.getName;
 end;
 
 function TNPC.toString: String;
 begin
   Exit(Format('%s(lvl:%d): %d at (%d, %d)', [Self.getName, Self.getCombatLevel, Self.getID, Self.getX, Self.getY]));
+end;
+
+procedure TNPC.free; override;
+begin
+  composite.free;
+  reflectLib.freeObject(Self.ref);
+  Self.ref := 0;
 end;
 
 procedure TNPCArray.free;
