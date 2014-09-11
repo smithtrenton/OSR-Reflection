@@ -85,12 +85,13 @@ begin
 end;
 
 function TMath.boxMullerRandom(box: TBox): TPoint; overload;
-var
-  p: TPoint;
 begin
-  p.x := Self.boxMullerRandom(box.x1, box.x2);
-  p.y := Self.boxMullerRandom(box.y1, box.y2);
+  Result.x := Self.boxMullerRandom(box.x1, box.x2);
+  Result.y := Self.boxMullerRandom(box.y1, box.y2);
 
-  if (not PointInBox(p, box)) then
-    writeln('boxMullerRandom(TBox)', Format('Point invalid (%d, %d)', [p.x, p.y]));
+  if (not PointInBox(Result, box)) then
+  begin
+    writeln('boxMullerRandom(TBox)', Format('Point invalid (%d, %d)', [Result.x, Result.y]));
+    Result := Point(RandomRange(box.x1, box.x2), RandomRange(box.y1, box.y2));
+  end;
 end;

@@ -111,7 +111,7 @@ begin
   InvertTPA(Result);
 end;
 
-procedure TInput.move(x, y: Integer; rx: Integer = 0; ry: Integer = 0);
+procedure TInput.move(x, y: Integer);
 var
   cx, cy, i, s, w, len: Integer;
   points: TPointArray;
@@ -119,7 +119,7 @@ begin
   GetMousePos(cx, cy);
   if (x = cx and y = cy) then
     Exit;
-  points := Self.windPoints(cx, cy, x + RandomRange(-rx, rx), y + RandomRange(-ry, ry), 8, 10, RandomRange(0,20) + RandomE);
+  points := Self.windPoints(cx, cy, x, y, 8, 10, RandomRange(0,20) + RandomE);
   s := RandomRange(25, 35);
   len := Length(points);
   for i := 0 to (len - 1) do
@@ -133,14 +133,14 @@ begin
   end;
 end;
 
-procedure TInput.move(p: TPoint; rx: Integer = 0; ry: Integer = 0); overload;
+procedure TInput.move(p: TPoint); overload;
 begin
-  Self.move(p.x, p.y, rx, ry);
+  Self.move(p.x, p.y);
 end;
 
-procedure TInput.click(x, y: Integer; rx: Integer = 0; ry: Integer = 0; button: Integer = mouse_Move);
+procedure TInput.click(x, y: Integer; button: Integer = mouse_Move);
 begin
-  Self.move(x, y, rx, ry);
+  Self.move(x, y);
   if button > mouse_Move then
   begin
     getMousePos(x, y);
@@ -151,18 +151,18 @@ begin
   end;
 end;
 
-procedure TInput.click(p: TPoint; rx: Integer = 0; ry: Integer = 0; button: Integer = mouse_Left); overload;
+procedure TInput.click(p: TPoint; button: Integer = mouse_Left); overload;
 begin
-  Self.click(p.x, p.y, rx, ry, button);
+  Self.click(p.x, p.y, button);
 end;
 
-procedure TInput.drag(sx, sy, dx, dy: Integer; rx: Integer = 0; ry: Integer = 0);
+procedure TInput.drag(sx, sy, dx, dy: Integer);
 begin
-  Self.move(sx, sy, rx, ry);
+  Self.move(sx, sy);
   getMousePos(sx, sy);
   holdMouse(sx, sy, mouse_Left);
   wait(random(100));
-  Self.move(dx, dy, rx, ry);
+  Self.move(dx, dy);
   getMousePos(dx, dy);
   wait(random(100));
   releaseMouse(dx, dy, mouse_Left);
@@ -173,27 +173,25 @@ begin
   Self.drag(s.x, s.y, d.x, d.y);
 end;
 
-procedure TInput.scroll(x, y: Integer; rx: Integer = 0; ry: Integer = 0; scrolls: Integer; down: Boolean);
+procedure TInput.scroll(x, y: Integer; scrolls: Integer; down: Boolean = True);
 var
   c: integer;
 begin
-  self.move(x, y, rx, ry);
-  getMousePos(x, y);
-
+  self.move(x, y);
   repeat
+    getMousePos(x, y);
     if (down) then
       scrollMouse(x, y, 1)
     else
       scrollMouse(x, y, -1);
-
     wait(16 + random(200));
     inc(c);
   until(c >= scrolls);
 end;
 
-procedure TInput.scroll(p: TPoint; rx: Integer = 0; ry: Integer = 0; scrolls: Integer; down: Boolean); overload;
+procedure TInput.scroll(p: TPoint; scrolls: Integer; down: Boolean = True); overload;
 begin
-  Self.scroll(p.x, p.y, rx, ry, scrolls, down);
+  Self.scroll(p.x, p.y, scrolls, down);
 end;
 
 procedure TInput.box(b: TBox; button: Integer = mouse_Move);

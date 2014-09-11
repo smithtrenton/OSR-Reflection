@@ -11,5 +11,7 @@ begin
   Smart.Init;
   SetupOSRReflection(Smart.Target);
 
+  rsinput.box(inttobox(300,300,500,500), mouse_Left);
+
   Smart.Free;
 end.
