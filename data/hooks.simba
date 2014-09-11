@@ -278,8 +278,8 @@ const
     hook_Widget_getItemID: THook = ['du', 'getItemID', 802088521];
     hook_Widget_getLoopCycleStatus: THook = ['dg', 'getLoopCycleStatus', -1404242157];
     hook_Widget_getName: THook = ['bv', 'getName', 0];
-    hook_Widget_getRelativeX: THook = ['k', 'getRelativeX', -764139897];
-    hook_Widget_getRelativeY: THook = ['b', 'getRelativeY', -1971283087];
+    hook_Widget_getRelativeX: THook = ['p', 'getRelativeX', 692928385];
+    hook_Widget_getRelativeY: THook = ['x', 'getRelativeY', -598844925];
     hook_Widget_getRoot: THook = ['bj', 'getRoot', 0];
     hook_Widget_getRootID: THook = ['h', 'getRootID', 1154498019];
     hook_Widget_getScrollX: THook = ['o', 'getScrollX', -1096692949];
@@ -290,8 +290,8 @@ const
     hook_Widget_getText: THook = ['br', 'getText', 0];
     hook_Widget_getTextureID: THook = ['aq', 'getTextureID', 2009338005];
     hook_Widget_getWidth: THook = ['k', 'getWidth', -764139897];
-    hook_Widget_getX: THook = ['p', 'getX', 692928385];
-    hook_Widget_getY: THook = ['x', 'getY', -598844925];
+    hook_Widget_getX: THook = ['y', 'getX', 884853035];
+    hook_Widget_getY: THook = ['r', 'getY', 1381581487];
     hook_Widget_isHidden: THook = ['i', 'isHidden', 0];
 
   hook_WidgetNode: THook = ['e', 'WidgetNode', 0];
