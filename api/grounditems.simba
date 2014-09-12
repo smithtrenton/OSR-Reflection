@@ -1,0 +1,96 @@
+(*
+GroundItems
+===========
+
+GroundItems contains the GroundItem api methods.
+
+*)
+
+{$include_once ..\wrappers\grounditem.simba}
+
+type
+  TGroundItemApi = type(TApi);
+var
+  groundItemAPI: TGroundItemApi;
+
+function TGroundItemApi.getGroundItems(x, y: Integer): TGroundItemArray;
+var
+  region: TRegion;
+  tile: TSceneTile;
+  plane: Integer;
+  groundItem: TGroundItem;
+begin
+  region.create;
+  if not(region.isNull) then
+  begin
+    plane := rsclient.getPlane;
+    tile := region.getTile(x, y, plane);
+    if not(tile.isNull) then
+    begin
+      writeln('tile: ', tile.ref);
+      Result := tile.getGroundItems;
+    end;
+  end;
+  region.free;
+  tile.free;
+end;
+
+function TGroundItemApi.getGroundItems(filter: function(var n: TGroundItem): Boolean): TGroundItemArray; overload;
+begin
+end;
+
+function TGroundItemApi.getGroundItems: TGroundItemArray; overload;
+  function filter(var n: TGroundItem): Boolean;
+  begin
+    Result := true;
+  end;
+begin
+  Result := Self.getGroundItems(@filter);
+end;
+
+function TGroundItemApi.getGroundItem(filter: function(var n: TGroundItem): Boolean): TGroundItem;
+var
+  groundItems: TGroundItemArray;
+  len: Integer;
+begin
+  groundItems := Self.getGroundItems(@filter);
+  len := Length(groundItems);
+  if (len > 0) then
+  begin
+    Result := groundItems[0];
+    Delete(groundItems, 0, 1);
+  end;
+  groundItems.free;
+end;
+
+function TGroundItemApi.findGroundItems(filter: function(var n: TGroundItem): Boolean; var groundItems: TGroundItemArray): Boolean;
+begin
+  groundItems.free;
+  groundItems := Self.getGroundItems(@filter);
+  Result := Length(groundItems) > 0;
+end;
+
+function TGroundItemApi.findGroundItems(filter: function(var n: TGroundItem): Boolean): Boolean; overload;
+var
+  groundItems: TGroundItemArray;
+begin
+  Result := Self.findGroundItems(@filter, groundItems);
+  groundItems.free;
+end;
+
+function TGroundItemApi.findGroundItem(filter: function(var n: TGroundItem): Boolean; var GroundItem: TGroundItem): Boolean;
+begin
+  groundItem.free;
+  groundItem := Self.getGroundItem(@filter);
+  Result := not groundItem.isNull;
+  if not Result then
+    groundItem.free;
+end;
+
+function TGroundItemApi.findGroundItem(filter: function(var n: TGroundItem): Boolean): Boolean; overload;
+var
+  groundItem: TGroundItem;
+begin
+  Result := Self.findGroundItem(@filter, GroundItem);
+  groundItem.free;
+end;
