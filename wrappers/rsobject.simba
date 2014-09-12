@@ -66,7 +66,7 @@ end;
 
 function TRSObject.isNull: Boolean;
 begin
-  Result := reflectLib.isNull(Self.ref);
+  Result := (ref <= 0) or reflectLib.isNull(Self.ref);
 end;
 
 function TRSObject.isEqual(rsobj: TRSObject): Boolean;

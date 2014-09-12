@@ -6,6 +6,8 @@ Nodes contains the node/hashtable record and accessors
 
 *)
 
+{$include_once ..\wrappers\rsobject.simba}
+
 type
   TNode = type(TRSObject);
   TNodeArray = array of TNode;
@@ -112,10 +114,10 @@ end;
 
 function TLinkedList.getHead: TNode;
 begin
-  Result.create(Self.ref, hook_LinkedList_getHead);
+  Result.create(Self.ref, hook_LinkedList_getHead, 'TLinkedList.getHead');
 end;
 
 function TLinkedList.getTail: TNode;
 begin
-  Result.create(Self.ref, hook_LinkedList_getTail);
+  Result.create(Self.ref, hook_LinkedList_getTail, 'TLinkedList.getTail');
 end;

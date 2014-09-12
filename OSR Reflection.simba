@@ -14,7 +14,7 @@ const
 //Wrapper Includes
 {$include_once data\globals.simba}
 {$include_once wrappers\input.simba}
-{$include_once wrappers\rsobject.simba}
+{$include_once wrappers\nodes.simba}
 {$include_once wrappers\rsclient.simba}
 {$include_once wrappers\rsview.simba}
 
@@ -23,6 +23,7 @@ const
 {$include_once api\npcs.simba}
 {$include_once api\players.simba}
 {$include_once api\client.simba}
+{$include_once api\grounditems.simba}
 {$include_once api\walking.simba}
 {$include_once api\banking.simba}
 

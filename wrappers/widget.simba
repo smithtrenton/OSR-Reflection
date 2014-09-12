@@ -6,8 +6,6 @@ Widget contains the widget record and accessors
 
 *)
 
-{$include_once ..\wrappers\nodes.simba}
-
 type
   TWidget = type(TRSObject);
   TWidgetArray = array of TWidget;

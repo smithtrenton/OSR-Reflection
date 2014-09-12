@@ -188,3 +188,8 @@ begin
   Result := reflectLib.getFieldArrayInt(0, hook_Client_getSineTable, index);
 end;
 
+function TRSClient.getGroundItemList(x, y, plane: Integer): TLinkedList;
+begin
+  Result.create(0, hook_Client_getGroundItems, plane, x, y, Format('TRSClient.getGroundItemList[%d][%d][%d]', [plane, x, y]));
+end;
+

@@ -6,11 +6,16 @@ ItemComposite contains the ItemComposite record and accessors
 
 *)
 
+{$include_once ..\wrappers\scenetile.simba}
+
 type
   TItemComposite = type(TRSObject);
   TItemLayer = type(TRSObject);
-  TGroundItem = type(TRSObject);
-
+  TGroundItem = record(TRSObject)
+    composite: TItemComposite;
+    layer: TItemLayer;
+  end;
+  TGroundItemArray = array of TGroundItem;
 
 function TItemComposite.getGroundActions: TStringArray;
 begin
@@ -30,6 +35,11 @@ end;
 function TItemComposite.getMembers: boolean;
 begin
   Result := reflectLib.getFieldBoolean(Self.ref, hook_ItemComposite_isMembers);
+end;
+
+procedure TItemLayer.create(x, y, plane: Integer); overload;
+begin
+
 end;
 
 function TItemLayer.getX: Integer;
@@ -67,4 +77,102 @@ begin
   Result := reflectLib.getFieldInt(Self.ref, hook_Item_getStackSize);
 end;
 
+function TGroundItem.getLayer: TItemLayer;
+begin
+  if (Self.layer.isNull) then
+    writeln('ERROR WITH GROUNDITEM.LAYER');
+  Result := Self.layer;
+end;
 
+function TGroundItem.getComposite: TItemComposite;
+var
+  cache: TCache;
+begin
+  if (Self.composite.isNull) then
+  begin
+    cache.create(0, hook_Client_getItemCompositeCache, 'TGroundItem.getComposite');
+    Self.composite.create(cache.getComposite(Self.getId));
+    cache.free;
+  end;
+  Result := Self.composite;
+end;
+
+function TGroundItem.toString: String;
+begin
+  Exit(Format('%s : %d at (%d, %d)', [Self.getComposite.getName, Self.getId, Self.getLayer.getX, Self.getLayer.getY]));
+end;
+
+procedure TGroundItem.free; override;
+begin
+  Self.composite.free;
+  Self.layer.free;
+  reflectLib.freeObject(Self.ref);
+  Self.ref := 0;
+end;
+
+procedure TGroundItemArray.free;
+var
+  i, hi: Integer;
+begin
+  hi := High(Self);
+  for i := 0 to hi do
+    Self[i].free;
+  Delete(Self, 0);
+end;
+
+procedure TGroundItemArray.remove(index: Integer);
+begin
+  Self[index].free;
+  Delete(Self, index, 1);
+end;
+
+function TGroundItemArray.toString: String;
+var
+  i, len: Integer;
+  str: String;
+begin
+  len := Length(Self);
+  Result := GetGlobalName(@Self) + '(len = ' + IntToStr(len) + ') :';
+  for i := 0 to len - 1 do
+  begin
+    Result := Result + #13#10#9 + Self[i].toString;
+  end;
+end;
+
+function TSceneTile.getItemLayer: TItemLayer;
+begin
+  Result.create(Self.ref, hook_Tile_getItemLayer, 'TSceneTile.getItemLayer');
+end;
+
+function TSceneTile.getGroundItems: TGroundItemArray;
+var
+  itemList: TLinkedList;
+  node, head, temp: TNode;
+  groundItem: TGroundItem;
+begin
+  itemList := rsclient.getGroundItemList(Self.getX, Self.getY, Self.getPlane);
+  writeln('list: ', itemList.ref);
+  if not(itemList.isNull) then
+  begin
+    head := itemList.getHead;
+    node := head.getNext;
+    writeln('head: ', head.getUID);
+    writeln('next: ', node.getUID);
+    while (head.getUID <> node.getUID) do
+    begin
+      if not(node.isNull) then
+      begin
+        groundItem.create(node.ref);
+        groundItem.layer := Self.getItemLayer;
+        writeln('name:', groundItem.composite.getName);
+      end else
+      begin
+        node.free;
+      end;
+      temp := node;
+      node := temp.getNext;
+    end;
+    head.free;
+  end;
+  itemList.free;
+end;
