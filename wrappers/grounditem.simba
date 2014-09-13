@@ -6,11 +6,14 @@ ItemComposite contains the ItemComposite record and accessors
 
 *)
 
+{$include_once ..\wrappers\scenetile.simba}
+
 type
   TItemComposite = type(TRSObject);
-  TItemLayer = type(TRSObject);
-  TGroundItem = type(TRSObject);
-
+  TGroundItem = record(TLocatable)
+    composite: TItemComposite;
+  end;
+  TGroundItemArray = array of TGroundItem;
 
 function TItemComposite.getGroundActions: TStringArray;
 begin
@@ -32,31 +35,6 @@ begin
   Result := reflectLib.getFieldBoolean(Self.ref, hook_ItemComposite_isMembers);
 end;
 
-function TItemLayer.getX: Integer;
-begin
-  Result := reflectLib.getFieldInt(Self.ref, hook_ItemLayer_getX);
-end;
-
-function TItemLayer.getY: Integer;
-begin
-  Result := reflectLib.getFieldInt(Self.ref, hook_ItemLayer_getY);
-end;
-
-function TItemLayer.getPlane: Integer;
-begin
-  Result := reflectLib.getFieldInt(Self.ref, hook_ItemLayer_getPlane);
-end;
-
-function TItemLayer.getId: Integer;
-begin
-  Result := reflectLib.getFieldInt(Self.ref, hook_ItemLayer_getId);
-end;
-
-function TItemLayer.getHeight: Integer;
-begin
-  Result := reflectLib.getFieldInt(Self.ref, hook_ItemLayer_getHeight);
-end;
-
 function TGroundItem.getId: Integer;
 begin
   Result := reflectLib.getFieldInt(Self.ref, hook_Item_getId);
@@ -67,4 +45,132 @@ begin
   Result := reflectLib.getFieldInt(Self.ref, hook_Item_getStackSize);
 end;
 
+function TGroundItem.getComposite: TItemComposite;
+var
+  cache: TCache;
+begin
+  if (Self.composite.isNull) then
+  begin
+    Self.composite.free;
+    cache.create(0, hook_Client_getItemCompositeCache, 'TGroundItem.getComposite');
+    Self.composite.create(cache.getComposite(Self.getId));
+    cache.free;
+  end;
+  Result := Self.composite;
+end;
 
+function TGroundItem.toString: String;
+begin
+  if not(getComposite.isNull) then
+    Exit(Format('(%d)%s : %d at (%d, %d)', [Self.getStackSize, Self.getComposite.getName, Self.getId, Self.tile.X, Self.tile.Y]));
+end;
+
+procedure TGroundItem.free; override;
+begin
+  Self.composite.free;
+  reflectLib.freeObject(Self.ref);
+  Self.ref := 0;
+end;
+
+procedure TGroundItemArray.free;
+var
+  i, hi: Integer;
+begin
+  hi := High(Self);
+  for i := 0 to hi do
+    Self[i].free;
+  SetLength(Self, 0);
+end;
+
+procedure TGroundItemArray.remove(index: Integer);
+begin
+  Self[index].free;
+  Delete(Self, index, 1);
+end;
+
+procedure TGroundItemArray.add(gi: TGroundItem);
+var
+  len: Integer;
+begin
+  len := Length(Self);
+  SetLength(Self, len + 1);
+  Self[len] := gi;
+end;
+
+procedure TGroundItemArray.add(gia: TGroundItemArray); overload;
+var
+  len, i: Integer;
+begin
+  len := Length(gia);
+  for i := 0 to (len - 1) do
+    Self.add(gia[i]);
+end;
+
+function TGroundItemArray.toString: String;
+var
+  i, len: Integer;
+  str: String;
+begin
+  len := Length(Self);
+  Result := GetGlobalName(@Self) + '(len = ' + IntToStr(len) + ') :';
+  for i := 0 to len - 1 do
+  begin
+    Result := Result + #13#10#9 + Self[i].toString;
+  end;
+end;
+
+function TSceneTile.getGroundItems(filter: function(var n: TGroundItem): Boolean): TGroundItemArray;
+var
+  itemList: TLinkedList;
+  node, head, temp: TNode;
+  groundItem: TGroundItem;
+  added: Boolean;
+  res: String;
+  headID, nodeID, x, y, plane: Integer;
+begin
+  x := Self.getX; y := Self.getY;
+  plane := self.getPlane;
+  itemList := rsclient.getGroundItemList(Self.getX, Self.getY, Self.getPlane);
+  if not(itemList.isNull) then
+  begin
+    head := itemList.getHead;
+    if not(head.isNull) then
+    begin
+      node := head.getNext;
+      if not(node.isNull) then
+      begin
+        headID := reflectLib.getFieldInt(head.ref, hook_Item_getID);
+        nodeID := reflectLib.getFieldInt(node.ref, hook_Item_getID);
+        while (headID <>
+          nodeID) do
+        begin
+          added := false;
+          if not(node.isNull) and (reflectLib.getFieldInt(node.ref, hook_Item_getID) > 0) then
+          begin
+            groundItem.create(node.ref, Point(x, y), plane);
+            if (filter(groundItem)) then
+            begin
+              Result.add(groundItem);
+              added := true;
+            end;
+          end;
+          temp := node;
+          node := temp.getNext;
+          if not added then
+          begin
+            temp.free;
+            groundItem.composite.free;
+          end else
+            groundItem.composite.ref := 0;
+          if node.isNull then
+            break;
+          nodeID := reflectLib.getFieldInt(node.ref, hook_Item_getID);
+        end;
+        if not(node.isNull) and (reflectLib.getFieldInt(node.ref, hook_Item_getID) <= 0) then
+          node.free;
+      end;
+    end;
+    head.free;
+  end;
+  itemList.free;
+end;

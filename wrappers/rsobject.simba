@@ -12,6 +12,10 @@ type
   TRSObject = record
     ref: PtrUInt;
   end;
+  TLocatable = record(TRSObject)
+    tile: TPoint;
+    plane: Integer;
+  end;
 
 procedure TRSObject.create(_ref: PtrUInt);
 begin
@@ -66,10 +70,17 @@ end;
 
 function TRSObject.isNull: Boolean;
 begin
-  Result := reflectLib.isNull(Self.ref);
+  Result := (ref <= 0) or reflectLib.isNull(Self.ref);
 end;
 
 function TRSObject.isEqual(rsobj: TRSObject): Boolean;
 begin
   Result := reflectLib.isEqual(Self.ref, rsobj.ref);
+end;
+
+procedure TLocatable.create(_ref: PtrUInt; t: TPoint; p: Integer); overload;
+begin
+  Self.create(_ref);
+  Self.tile := t;
+  Self.plane := p;
 end;

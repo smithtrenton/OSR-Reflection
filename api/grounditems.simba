@@ -1,0 +1,119 @@
+(*
+GroundItems
+===========
+
+GroundItems contains the GroundItem api methods.
+
+*)
+
+{$include_once ..\wrappers\grounditem.simba}
+
+type
+  TGroundItemApi = type(TApi);
+var
+  groundItemAPI: TGroundItemApi;
+
+function TGroundItemApi.getGroundItems(t: TPoint; filter: function(var n: TGroundItem): Boolean): TGroundItemArray;
+var
+  region: TRegion;
+  tile: TSceneTile;
+  len, i, bx, by, plane: Integer;
+begin
+  region.create;
+  if not(region.isNull) then
+  begin
+    plane := rsclient.getPlane;
+    bx := rsclient.getBaseX; by := rsclient.getBaseY;
+    tile := region.getTile(t.X - bx, t.Y - by, plane);
+    if not(tile.isNull) then
+    begin
+      Result := tile.getGroundItems(@filter);
+      len := Length(Result);
+      for i := 0 to (len - 1) do
+      begin
+        Result[i].tile.X += bx;
+        Result[i].tile.Y += by;
+      end;
+    end;
+    tile.free;
+  end;
+  region.free;
+end;
+
+function TGroundItemApi.getGroundItems(t: TPoint): TGroundItemArray; overload;
+  function filter(var n: TGroundItem): Boolean;
+  begin
+    Result := true;
+  end;
+begin
+  Result := Self.getGroundItems(t, @filter);
+end;
+
+function TGroundItemApi.getGroundItems(dist: Integer = 18; filter: function(var n: TGroundItem): Boolean): TGroundItemArray; overload;
+var
+  i, len: Integer;
+  tile: TPoint;
+  tiles: TPointArray;
+begin
+  tile := rsclient.getTile;
+  tiles := math.getTilesDistance(tile.X, tile.Y, dist);
+  len := length(tiles);
+  for i := 0 to (len - 1) do
+    Result.add(Self.getGroundItems(tiles[i], @filter));
+end;
+
+function TGroundItemApi.getGroundItems(dist: Integer = 18): TGroundItemArray; overload;
+  function filter(var n: TGroundItem): Boolean;
+  begin
+    Result := true;
+  end;
+begin
+  Result := Self.getGroundItems(dist, @filter);
+end;
+
+function TGroundItemApi.getGroundItem(dist: Integer = 18; filter: function(var n: TGroundItem): Boolean): TGroundItem;
+var
+  groundItems: TGroundItemArray;
+  len: Integer;
+begin
+  groundItems := Self.getGroundItems(dist, @filter);
+  len := Length(groundItems);
+  if (len > 0) then
+  begin
+    Result := groundItems[0];
+    Delete(groundItems, 0, 1);
+  end;
+  groundItems.free;
+end;
+
+function TGroundItemApi.findGroundItems(dist: Integer = 18; filter: function(var n: TGroundItem): Boolean; var groundItems: TGroundItemArray): Boolean;
+begin
+  groundItems.free;
+  groundItems := Self.getGroundItems(dist, @filter);
+  Result := Length(groundItems) > 0;
+end;
+
+function TGroundItemApi.findGroundItems(dist: Integer = 18; filter: function(var n: TGroundItem): Boolean): Boolean; overload;
+var
+  groundItems: TGroundItemArray;
+begin
+  Result := Self.findGroundItems(dist, @filter, groundItems);
+  groundItems.free;
+end;
+
+function TGroundItemApi.findGroundItem(dist: Integer = 18; filter: function(var n: TGroundItem): Boolean; var GroundItem: TGroundItem): Boolean;
+begin
+  groundItem.free;
+  groundItem := Self.getGroundItem(dist, @filter);
+  Result := not groundItem.isNull;
+  if not Result then
+    groundItem.free;
+end;
+
+function TGroundItemApi.findGroundItem(dist: Integer = 18; filter: function(var n: TGroundItem): Boolean): Boolean; overload;
+var
+  groundItem: TGroundItem;
+begin
+  Result := Self.findGroundItem(dist, @filter, GroundItem);
+  groundItem.free;
+end;

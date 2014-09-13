@@ -64,6 +64,16 @@ begin
   Result := self[index];
 end;
 
+function TSmartObjectArray.count(_ref: PtrUInt): Integer;
+var
+  hi, i: Integer;
+begin
+  hi := Self.getSize - 1;
+  for i := 0 to hi do
+    if self[i].ref = _ref then
+      Inc(Result);
+end;
+
 function TSmartObjectArray.getName(_name: String; var index: Integer): TSmartObject;
 var
   hi, i: Integer;
@@ -76,7 +86,6 @@ begin
       Exit(self[i]);
     end;
   index := -1;
-  Exit;
 end;
 
 function TSmartObjectArray.getRef(_ref: PtrUInt; var index: Integer): TSmartObject;
@@ -91,7 +100,6 @@ begin
       Exit(self[i]);
     end;
   index := -1;
-  Exit;
 end;
 
 procedure TSmartObjectArray.add(so: TSmartObject);
@@ -116,7 +124,7 @@ procedure TSmartObjectArray.removeName(_name: String);
 var
   i: Integer;
 begin
-  while not Self.getName(_name, i).isNull do
+  if not Self.getName(_name, i).isNull then
     Self.remove(i);
 end;
 
@@ -124,7 +132,7 @@ procedure TSmartObjectArray.removeRef(_ref: PtrUInt);
 var
   i: Integer;
 begin
-  while not Self.getRef(_ref, i).isNull do
+  if not Self.getRef(_ref, i).isNull then
     Self.remove(i);
 end;
 

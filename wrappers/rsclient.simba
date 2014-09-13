@@ -91,11 +91,21 @@ begin
   Result := p.Y;
 end;
 
+function TRSClient.getX: Integer;
+begin
+  Result := Self.getLocalX + Self.getBaseX;
+end;
+
+function TRSClient.getY: Integer;
+begin
+  Result := Self.getLocalY + Self.getBaseY;
+end;
+
 function TRSClient.getTile: TPoint;
 begin
   Result := getLocalTile;
   Result.X += Self.getBaseX;
-  Result.y += Self.getBaseY;
+  Result.Y += Self.getBaseY;
 end;
 
 function TRSClient.getCameraPitch: Integer;
@@ -186,5 +196,10 @@ end;
 function TRSClient.getSineTable(index: Integer): Integer;
 begin
   Result := reflectLib.getFieldArrayInt(0, hook_Client_getSineTable, index);
+end;
+
+function TRSClient.getGroundItemList(x, y, plane: Integer): TLinkedList;
+begin
+  Result.create(0, hook_Client_getGroundItems, plane, x, y, Format('TRSClient.getGroundItemList[%d][%d][%d]', [plane, x, y]));
 end;
 

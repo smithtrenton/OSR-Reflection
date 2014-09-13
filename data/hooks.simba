@@ -194,8 +194,8 @@ const
     hook_Model_getVerticesZ: THook = ['z', 'getVerticesZ', 0];
 
   hook_Node: THook = ['gm', 'Node', 0];
-    hook_Node_getNext: THook = ['em', 'getNext', 0];
-    hook_Node_getPrevious: THook = ['eh', 'getPrevious', 0];
+    hook_Node_getNext: THook = ['eh', 'getNext', 0];
+    hook_Node_getPrevious: THook = ['em', 'getPrevious', 0];
     hook_Node_getUID: THook = ['df', 'getUID', 1];
 
   hook_NPC: THook = ['ab', 'NPC', 0];

@@ -57,9 +57,9 @@ end;
 
 function TNPC.getComposite: TNPCComposite;
 begin
-  if (composite.ref <= 0) then
-    composite.create(Self.ref, hook_NPC_getComposite, 'TNPC.getComposite');
-  Result := composite;
+  if (Self.composite.isNull) then
+    Self.composite.create(Self.ref, hook_NPC_getComposite, 'TNPC.getComposite:' + composite.getName);
+  Result := Self.composite;
 end;
 
 function TNPC.getActions: TStringArray;
@@ -89,7 +89,7 @@ end;
 
 procedure TNPC.free; override;
 begin
-  composite.free;
+  Self.composite.free;
   reflectLib.freeObject(Self.ref);
   Self.ref := 0;
 end;
@@ -101,7 +101,7 @@ begin
   hi := High(Self);
   for i := 0 to hi do
     Self[i].free;
-  Delete(Self, 0);
+  SetLength(Self, 0);
 end;
 
 procedure TNPCArray.remove(index: Integer);

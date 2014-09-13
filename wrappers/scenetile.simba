@@ -1,0 +1,37 @@
+(*
+SceneTile
+=========
+
+SceneTile contains the SceneTile record and accessors
+
+*)
+
+type
+  TRegion = type(TRSObject);
+  TSceneTile = type(TRSObject);
+
+procedure TRegion.create; overload;
+begin
+  Self.create(0, hook_Client_getRegion, 'TRegion.create');
+end;
+
+function TRegion.getTile(x, y, plane: Integer): TSceneTile;
+begin
+  if InRange(x, 0, 104) and InRange(y, 0, 104) then
+    Result.create(Self.ref, hook_Region_getTiles, plane, x, y, 'TRegion.getTile');
+end;
+
+function TSceneTile.getX: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_Tile_getX);
+end;
+
+function TSceneTile.getY: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_Tile_getY);
+end;
+
+function TSceneTile.getPlane: Integer;
+begin
+  Result := reflectLib.getFieldInt(Self.ref, hook_Tile_getPlane);
+end;
