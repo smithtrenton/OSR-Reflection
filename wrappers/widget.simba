@@ -17,7 +17,7 @@ begin
   hi := High(Self);
   for i := 0 to hi do
     Self[i].free;
-  Delete(Self, 0);
+  SetLength(Self, 0);
 end;
 
 function TWidget.toString: String; forward;

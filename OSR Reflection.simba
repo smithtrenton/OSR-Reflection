@@ -13,6 +13,7 @@ const
 
 //Wrapper Includes
 {$include_once data\globals.simba}
+{$include_once api\math.simba}
 {$include_once wrappers\input.simba}
 {$include_once wrappers\nodes.simba}
 {$include_once wrappers\rsclient.simba}

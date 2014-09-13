@@ -13,47 +13,60 @@ type
 var
   groundItemAPI: TGroundItemApi;
 
-function TGroundItemApi.getGroundItems(x, y: Integer): TGroundItemArray;
+function TGroundItemApi.getGroundItems(dist: Integer = 18; filter: function(var n: TGroundItem): Boolean): TGroundItemArray;
 var
+  plane, i, c, len, len2, bx, by: Integer;
+  tiles: TPointArray;
   region: TRegion;
   tile: TSceneTile;
-  plane: Integer;
-  groundItem: TGroundItem;
+  items: TGroundItemArray;
 begin
   region.create;
   if not(region.isNull) then
   begin
     plane := rsclient.getPlane;
-    tile := region.getTile(x, y, plane);
-    if not(tile.isNull) then
+    bx := rsclient.getBaseX; by := rsclient.getBaseY;
+    tiles := math.getTilesDistance(rsclient.getLocalX, rsclient.getLocalY, dist);
+    len := length(tiles);
+    for c := 0 to (len - 1) do
     begin
-      writeln('tile: ', tile.ref);
-      Result := tile.getGroundItems;
+      tile := region.getTile(tiles[c].X, tiles[c].Y, plane);
+      if not(tile.isNull) then
+      begin
+        items := tile.getGroundItems(@filter);
+        len2 := Length(items);
+        for i := 0 to (len2 - 1) do
+        begin
+          if (items[i].isNull) then
+            items.remove(i)
+          else
+          begin
+            items[i].tile.X += bx; items[i].tile.Y += by;
+            Result.add(items[i]);
+          end;
+        end;
+      end;
+      tile.free;
     end;
   end;
   region.free;
-  tile.free;
 end;
 
-function TGroundItemApi.getGroundItems(filter: function(var n: TGroundItem): Boolean): TGroundItemArray; overload;
-begin
-end;
-
-function TGroundItemApi.getGroundItems: TGroundItemArray; overload;
+function TGroundItemApi.getGroundItems(dist: Integer = 18): TGroundItemArray; overload;
   function filter(var n: TGroundItem): Boolean;
   begin
     Result := true;
   end;
 begin
-  Result := Self.getGroundItems(@filter);
+  Result := Self.getGroundItems(dist, @filter);
 end;
 
-function TGroundItemApi.getGroundItem(filter: function(var n: TGroundItem): Boolean): TGroundItem;
+function TGroundItemApi.getGroundItem(dist: Integer; filter: function(var n: TGroundItem): Boolean): TGroundItem;
 var
   groundItems: TGroundItemArray;
   len: Integer;
 begin
-  groundItems := Self.getGroundItems(@filter);
+  groundItems := Self.getGroundItems(dist, @filter);
   len := Length(groundItems);
   if (len > 0) then
   begin
@@ -63,34 +76,34 @@ begin
   groundItems.free;
 end;
 
-function TGroundItemApi.findGroundItems(filter: function(var n: TGroundItem): Boolean; var groundItems: TGroundItemArray): Boolean;
+function TGroundItemApi.findGroundItems(dist: Integer = 18; filter: function(var n: TGroundItem): Boolean; var groundItems: TGroundItemArray): Boolean;
 begin
   groundItems.free;
-  groundItems := Self.getGroundItems(@filter);
+  groundItems := Self.getGroundItems(dist, @filter);
   Result := Length(groundItems) > 0;
 end;
 
-function TGroundItemApi.findGroundItems(filter: function(var n: TGroundItem): Boolean): Boolean; overload;
+function TGroundItemApi.findGroundItems(dist: Integer = 18; filter: function(var n: TGroundItem): Boolean): Boolean; overload;
 var
   groundItems: TGroundItemArray;
 begin
-  Result := Self.findGroundItems(@filter, groundItems);
+  Result := Self.findGroundItems(dist, @filter, groundItems);
   groundItems.free;
 end;
 
-function TGroundItemApi.findGroundItem(filter: function(var n: TGroundItem): Boolean; var GroundItem: TGroundItem): Boolean;
+function TGroundItemApi.findGroundItem(dist: Integer = 18; filter: function(var n: TGroundItem): Boolean; var GroundItem: TGroundItem): Boolean;
 begin
   groundItem.free;
-  groundItem := Self.getGroundItem(@filter);
+  groundItem := Self.getGroundItem(dist, @filter);
   Result := not groundItem.isNull;
   if not Result then
     groundItem.free;
 end;
 
-function TGroundItemApi.findGroundItem(filter: function(var n: TGroundItem): Boolean): Boolean; overload;
+function TGroundItemApi.findGroundItem(dist: Integer = 18; filter: function(var n: TGroundItem): Boolean): Boolean; overload;
 var
   groundItem: TGroundItem;
 begin
-  Result := Self.findGroundItem(@filter, GroundItem);
+  Result := Self.findGroundItem(dist, @filter, GroundItem);
   groundItem.free;
 end;

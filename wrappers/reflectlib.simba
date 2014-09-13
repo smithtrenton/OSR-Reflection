@@ -49,9 +49,11 @@ end;
 
 procedure TReflectLib.freeObject(objref:PtrUInt);
 begin
-  if not Self.isNull(objref) then
-    SmartFreeObject(Self.smartPointer, objref);
   Self.objectManager.removeRef(objref);
+  if ((Self.objectManager.count(objref) = 0) and (objref > 0) and not Self.isNull(objref)) then
+  begin
+    SmartFreeObject(Self.smartPointer, objref);
+  end;
 end;
 
 function TReflectLib.freeAllObjects(debug: Boolean): Integer;

@@ -88,13 +88,13 @@ begin
     for i := 0 to (len - 1) do
     begin
       node := nodes[i].getNext;
-
       while (nodes[i].getUID <> node.getUID) do
       begin
         if (id = node.getUID) then
         begin
           Result := node.ref;
-          next.free;
+          if (next.ref <> node.ref) then
+            next.free;
           Exit;
         end;
 
@@ -102,7 +102,6 @@ begin
         node.free;
         node := next;
       end;
-
       node.free;
       next.free;
     end;
