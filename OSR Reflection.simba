@@ -14,12 +14,14 @@ const
 //Wrapper Includes
 {$include_once data\globals.simba}
 {$include_once api\math.simba}
+{$include_once wrappers\misc.simba}
 {$include_once wrappers\input.simba}
 {$include_once wrappers\nodes.simba}
 {$include_once wrappers\rsclient.simba}
 {$include_once wrappers\rsview.simba}
 
 //API Includes
+{$include_once api\menu.simba}
 {$include_once api\widgets.simba}
 {$include_once api\npcs.simba}
 {$include_once api\players.simba}

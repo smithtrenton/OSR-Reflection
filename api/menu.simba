@@ -1,0 +1,86 @@
+(*
+Menu
+====
+
+Menu contains the menu api
+
+*)
+
+type
+  TMenuApi = type(TApi);
+
+var
+  menuApi: TMenuApi;
+
+function TMenuApi.getX: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getMenuX);
+end;
+
+function TMenuApi.getY: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getMenuY);
+end;
+
+function TMenuApi.getWidth: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getMenuWidth);
+end;
+
+function TMenuApi.getHeight: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getMenuHeight);
+end;
+
+function TMenuApi.getBounds: TBox;
+begin
+  Result := IntToBox(Self.getX, Self.getY, Self.getWidth, Self.getHeight);
+end;
+
+function TMenuApi.getCount: Integer;
+begin
+  Result := reflectLib.getFieldInt(0, hook_Client_getMenuCount);
+end;
+
+function TMenuApi.getOptions: TStringArray;
+var
+  i, count: Integer;
+begin
+  count := Self.getCount;
+  for i := (count - 1) downto 0 do
+    Result.add(reflectLib.getFieldArrayString(0, hook_Client_getMenuOptions, i).clearHTML);
+end;
+
+function TMenuApi.getActions: TStringArray;
+var
+  i, count: Integer;
+begin
+  count := Self.getCount;
+  for i := (count - 1) downto 0 do
+    Result.add(reflectLib.getFieldArrayString(0, hook_Client_getMenuActions, i).clearHTML);
+end;
+
+function TMenuApi.getLines: TStringArray;
+var
+  i, count: Integer;
+  options, actions: TStringArray;
+begin
+  count := Self.getCount;
+  for i := (count - 1) downto 0 do
+    Result.add(Trim(reflectLib.getFieldArrayString(0, hook_Client_getMenuActions, i).clearHTML + ' '
+      + reflectLib.getFieldArrayString(0, hook_Client_getMenuOptions, i).clearHTML));
+end;
+
+function TMenuApi.getUptext: String;
+var
+  lines: TStringArray;
+begin
+  lines := Self.getLines;
+  if (Length(lines) > 0) then
+    Result := lines[0];
+end;
+
+function TMenuApi.isOpen: Boolean;
+begin
+  Result := reflectLib.getFieldBoolean(0, hook_Client_isMenuOpen);
+end;

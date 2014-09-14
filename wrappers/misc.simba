@@ -1,0 +1,21 @@
+(*
+Misc
+====
+
+Misc contains anything not related to other wrappers
+
+*)
+
+procedure TStringArray.add(str: String);
+var
+  len: Integer;
+begin
+  len := Length(Self);
+  SetLength(Self, len + 1);
+  Self[len] := str;
+end;
+
+function String.clearHTML: String;
+begin
+  Result := Trim(ReplaceRegExpr('<.+?>', Self, '', True));
+end;
