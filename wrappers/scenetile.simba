@@ -18,20 +18,20 @@ end;
 function TRegion.getTile(x, y, plane: Integer): TSceneTile;
 begin
   if InRange(x, 0, 104) and InRange(y, 0, 104) then
-    Result.create(Self.ref, hook_Region_getTiles, plane, x, y, 'TRegion.getTile');
+    Result.create(Self.ref, hook_Region_getSceneTiles, plane, x, y, 'TRegion.getTile');
 end;
 
 function TSceneTile.getX: Integer;
 begin
-  Result := reflectLib.getFieldInt(Self.ref, hook_Tile_getX);
+  Result := reflectLib.getFieldInt(Self.ref, hook_SceneTile_getX);
 end;
 
 function TSceneTile.getY: Integer;
 begin
-  Result := reflectLib.getFieldInt(Self.ref, hook_Tile_getY);
+  Result := reflectLib.getFieldInt(Self.ref, hook_SceneTile_getY);
 end;
 
 function TSceneTile.getPlane: Integer;
 begin
-  Result := reflectLib.getFieldInt(Self.ref, hook_Tile_getPlane);
+  Result := reflectLib.getFieldInt(Self.ref, hook_SceneTile_getPlane);
 end;

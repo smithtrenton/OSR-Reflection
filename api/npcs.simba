@@ -43,7 +43,7 @@ begin
       npc.free;
       continue;
     end;
-    npc.composite.free;
+    npc.def.free;
     Insert(npc, Result);
   end;
 end;

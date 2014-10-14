@@ -9,77 +9,77 @@ Npc contains the Npc record and accessors
 {$include_once ..\wrappers\character.simba}
 
 type
-  TNPCComposite = type(TRSObject);
+  TNPCDefinition = type(TRSObject);
   TNPC = record(TCharacter)
-    composite: TNPCComposite;
+    def: TNPCDefinition;
   end;
   TNPCArray = array of TNPC;
 
-function TNPCComposite.getActions: TStringArray;
+function TNPCDefinition.getActions: TStringArray;
 begin
-  Result := reflectLib.getFieldStringArray(Self.ref, hook_NPCComposite_getActions);
+  Result := reflectLib.getFieldStringArray(Self.ref, hook_NPCDefinition_getActions);
 end;
 
-function TNPCComposite.getCombatLevel: Integer;
+function TNPCDefinition.getCombatLevel: Integer;
 begin
-  Result := reflectLib.getFieldInt(Self.ref, hook_NPCComposite_getCombatLevel);
+  Result := reflectLib.getFieldInt(Self.ref, hook_NPCDefinition_getCombatLevel);
 end;
 
-function TNPCComposite.getID: Integer;
+function TNPCDefinition.getID: Integer;
 begin
-  Result := reflectLib.getFieldInt(Self.ref, hook_NPCComposite_getID);
+  Result := reflectLib.getFieldInt(Self.ref, hook_NPCDefinition_getID);
 end;
 
-function TNPCComposite.getName: String;
+function TNPCDefinition.getName: String;
 begin
-  Result := reflectLib.getFieldString(Self.ref, hook_NPCComposite_getName);
+  Result := reflectLib.getFieldString(Self.ref, hook_NPCDefinition_getName);
 end;
 
-function TNPCComposite.getSettingID: Integer;
+function TNPCDefinition.getSettingID: Integer;
 begin
-  Result := reflectLib.getFieldInt(Self.ref, hook_NPCComposite_getSettingID);
+  Result := reflectLib.getFieldInt(Self.ref, hook_NPCDefinition_getSettingID);
 end;
 
-function TNPCComposite.getTransformIDs: TIntegerArray;
+function TNPCDefinition.getTransformIDs: TIntegerArray;
 begin
-  Result := reflectLib.getFieldIntArray(Self.ref, hook_NPCComposite_getTransformIDs);
+  Result := reflectLib.getFieldIntArray(Self.ref, hook_NPCDefinition_getTransformIDs);
 end;
 
-function TNPCComposite.getVarBitID: Integer;
+function TNPCDefinition.getVarBitID: Integer;
 begin
-  Result := reflectLib.getFieldInt(Self.ref, hook_NPCComposite_getVarBitID);
+  Result := reflectLib.getFieldInt(Self.ref, hook_NPCDefinition_getVarBitID);
 end;
 
-function TNPCComposite.isValid: Boolean;
+function TNPCDefinition.isValid: Boolean;
 begin
   Result := (Self.ref > 0) and (Length(Self.getName) > 0) and (Self.getName <> 'null');
 end;
 
-function TNPC.getComposite: TNPCComposite;
+function TNPC.getDefinition: TNPCDefinition;
 begin
-  if (Self.composite.isNull) then
-    Self.composite.create(Self.ref, hook_NPC_getComposite, 'TNPC.getComposite:' + composite.getName);
-  Result := Self.composite;
+  if (Self.def.isNull) then
+    Self.def.create(Self.ref, hook_NPC_getDefinition, 'TNPC.getDefinition:' + def.getName);
+  Result := Self.def;
 end;
 
 function TNPC.getActions: TStringArray;
 begin
-  Result := Self.getComposite.getActions;
+  Result := Self.getDefinition.getActions;
 end;
 
 function TNPC.getCombatLevel: Integer;
 begin
-  Result := Self.getComposite.getCombatLevel;
+  Result := Self.getDefinition.getCombatLevel;
 end;
 
 function TNPC.getID: Integer;
 begin
-  Result := Self.getComposite.getID;
+  Result := Self.getDefinition.getID;
 end;
 
 function TNPC.getName: String;
 begin
-  Result := Self.getComposite.getName;
+  Result := Self.getDefinition.getName;
 end;
 
 function TNPC.toString: String;
@@ -89,7 +89,7 @@ end;
 
 procedure TNPC.free; override;
 begin
-  Self.composite.free;
+  Self.def.free;
   reflectLib.freeObject(Self.ref);
   Self.ref := 0;
 end;

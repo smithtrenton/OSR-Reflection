@@ -56,12 +56,12 @@ end;
 
 function TWidget.getRelativeX: Integer;
 begin
-  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getRelativeX);
+  //Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getRelativeX);
 end;
 
 function TWidget.getRelativeY: Integer;
 begin
-  Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getRelativeY);
+  //Result := reflectLib.getFieldInt(Self.ref, hook_Widget_getRelativeY);
 end;
 
 function TWidget.getWidgetX: Integer;

@@ -74,7 +74,7 @@ begin
   Result.create(Self.ref, hook_Cache_getHashTable, 'TCache.getHashTable');
 end;
 
-function TCache.getComposite(id: Integer): PtrUInt;
+function TCache.getDefinition(id: Integer): PtrUInt;
 var
   hashTable: THashTable;
   nodes: TNodeArray;

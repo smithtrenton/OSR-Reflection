@@ -1,38 +1,38 @@
 (*
-ItemComposite
+ItemDefinition
 =========
 
-ItemComposite contains the ItemComposite record and accessors
+ItemDefinition contains the ItemDefinition record and accessors
 
 *)
 
 {$include_once ..\wrappers\scenetile.simba}
 
 type
-  TItemComposite = type(TRSObject);
+  TItemDefinition = type(TRSObject);
   TGroundItem = record(TLocatable)
-    composite: TItemComposite;
+    def: TItemDefinition;
   end;
   TGroundItemArray = array of TGroundItem;
 
-function TItemComposite.getGroundActions: TStringArray;
+function TItemDefinition.getGroundActions: TStringArray;
 begin
-  Result := reflectLib.getFieldStringArray(Self.ref, hook_ItemComposite_getGroundActions);
+  Result := reflectLib.getFieldStringArray(Self.ref, hook_ItemDefinition_getGroundActions);
 end;
 
-function TItemComposite.getName: String;
+function TItemDefinition.getName: String;
 begin
-  Result := reflectLib.getFieldString(Self.ref, hook_ItemComposite_getName);
+  Result := reflectLib.getFieldString(Self.ref, hook_ItemDefinition_getName);
 end;
 
-function TItemComposite.getWidgetActions: TStringArray;
+function TItemDefinition.getWidgetActions: TStringArray;
 begin
-  Result := reflectLib.getFieldStringArray(Self.ref, hook_ItemComposite_getWidgetActions);
+  Result := reflectLib.getFieldStringArray(Self.ref, hook_ItemDefinition_getWidgetActions);
 end;
 
-function TItemComposite.getMembers: boolean;
+function TItemDefinition.getMembers: boolean;
 begin
-  Result := reflectLib.getFieldBoolean(Self.ref, hook_ItemComposite_isMembers);
+  Result := reflectLib.getFieldBoolean(Self.ref, hook_ItemDefinition_isMembers);
 end;
 
 function TGroundItem.getId: Integer;
@@ -45,29 +45,29 @@ begin
   Result := reflectLib.getFieldInt(Self.ref, hook_Item_getStackSize);
 end;
 
-function TGroundItem.getComposite: TItemComposite;
+function TGroundItem.getDefinition: TItemDefinition;
 var
   cache: TCache;
 begin
-  if (Self.composite.isNull) then
+  if (Self.def.isNull) then
   begin
-    Self.composite.free;
-    cache.create(0, hook_Client_getItemCompositeCache, 'TGroundItem.getComposite');
-    Self.composite.create(cache.getComposite(Self.getId));
+    Self.def.free;
+    cache.create(0, hook_Client_getItemDefinitionCache, 'TGroundItem.getDefinition');
+    Self.def.create(cache.getDefinition(Self.getId));
     cache.free;
   end;
-  Result := Self.composite;
+  Result := Self.def;
 end;
 
 function TGroundItem.toString: String;
 begin
-  if not(getComposite.isNull) then
-    Exit(Format('(%d)%s : %d at (%d, %d)', [Self.getStackSize, Self.getComposite.getName, Self.getId, Self.tile.X, Self.tile.Y]));
+  if not(getDefinition.isNull) then
+    Exit(Format('(%d)%s : %d at (%d, %d)', [Self.getStackSize, Self.getDefinition.getName, Self.getId, Self.tile.X, Self.tile.Y]));
 end;
 
 procedure TGroundItem.free; override;
 begin
-  Self.composite.free;
+  Self.def.free;
   reflectLib.freeObject(Self.ref);
   Self.ref := 0;
 end;
@@ -159,9 +159,9 @@ begin
           if not added then
           begin
             temp.free;
-            groundItem.composite.free;
+            groundItem.def.free;
           end else
-            groundItem.composite.ref := 0;
+            groundItem.def.ref := 0;
           if node.isNull then
             break;
           nodeID := reflectLib.getFieldInt(node.ref, hook_Item_getID);
